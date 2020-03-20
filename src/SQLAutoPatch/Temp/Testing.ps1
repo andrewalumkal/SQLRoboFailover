@@ -1,4 +1,12 @@
 import-module C:\Tools\SQLAutoPatch\src\SQLAutoPatch -Force
+#$ServerInstance = "933996-REPORT1"
+$ServerInstance = "vm-az-qa-sql01"
+
+[bool]$IsHealthy = $false
+#$IsHealthy = Test-AllAGDatabasesOnServerHealthy -ServerInstance $ServerInstance -RunExtendedChecks -Verbose
+$IsHealthy = Test-IsRestartReady -ServerInstance $ServerInstance -Verbose
+$IsHealthy
+
 
 [bool]$ReadyToRestart = 0
 $ReadyToRestart = Test-IsRestartReady -ServerInstance 933995-report2.viagogors.prod -Verbose

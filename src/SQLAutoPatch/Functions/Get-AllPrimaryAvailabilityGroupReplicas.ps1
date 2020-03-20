@@ -6,7 +6,7 @@ Function Get-AllPrimaryAvailabilityGroupReplicas {
         $ServerInstance
     )
 
-    $PrimaryAGReplicas = @(Get-AllAvailabilityGroupReplicas -ServerInstance $ServerInstance | Where-Object -Property ReplicaRole -eq "PRIMARY")
+    $PrimaryAGReplicas = @(Get-AvailabilityGroupsOnServer -ServerInstance $ServerInstance | Where-Object -Property ReplicaRole -eq "PRIMARY")
    
     return $PrimaryAGReplicas
     
