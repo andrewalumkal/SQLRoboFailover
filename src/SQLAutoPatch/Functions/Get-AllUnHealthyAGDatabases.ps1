@@ -1,4 +1,4 @@
-Function Get-UnHealthyAGDatabasesOnServer {
+Function Get-AllUnHealthyAGDatabases {
     [cmdletbinding()]
     Param(
         [Parameter(Mandatory = $true)]

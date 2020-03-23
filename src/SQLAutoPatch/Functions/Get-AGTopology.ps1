@@ -3,7 +3,7 @@ Function Get-AGTopology {
     Param(
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        $ServerInstance,
+        $PrimaryServerInstance,
 
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
@@ -11,7 +11,7 @@ Function Get-AGTopology {
 
     )
 
-    $AGReplicas = @(Get-AllAvailabilityGroupReplicas -ServerInstance $ServerInstance | Where-Object -Property AGName -eq $AvailabilityGroup) 
+    $AGReplicas = @(Get-AllAvailabilityGroupReplicas -ServerInstance $PrimaryServerInstance | Where-Object -Property AGName -eq $AvailabilityGroup) 
    
     $AGTopology = [PSCustomObject]@{
         AGName                      = $AvailabilityGroup

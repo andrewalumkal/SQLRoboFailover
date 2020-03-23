@@ -14,7 +14,7 @@ Function Find-PrimaryAGNodeFromSecondaryReplica {
     $PrimaryNode = $null
     [bool]$TestResult = 0
 
-    $AGNodes = @(Get-AGNodes -ServerInstance $ServerInstance -AvailabilityGroup $AvailabilityGroup)
+    $AGNodes = @(Get-AGNodes -ServerInstance $SecondaryServerInstance -AvailabilityGroup $AvailabilityGroup)
 
     foreach ($Node in $AGNodes.ReplicaServer) {
         
@@ -28,7 +28,7 @@ Function Find-PrimaryAGNodeFromSecondaryReplica {
     }
 
     if ($PrimaryNode -eq $null) {
-        Write-Error "Could not find primary replica node for Server: $ServerInstance , AG: $AvailabilityGroup"
+        Write-Error "Could not find primary replica node for Server: $SecondaryServerInstance , AG: $AvailabilityGroup"
         exit
     }
 

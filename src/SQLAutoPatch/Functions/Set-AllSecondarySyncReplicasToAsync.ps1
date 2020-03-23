@@ -46,7 +46,7 @@ Function Set-AllSecondarySyncReplicasToAsync {
 
         $PrimaryReplica = Find-PrimaryAGNodeFromSecondaryReplica -SecondaryServerInstance $ServerInstance -AvailabilityGroup $SecondaryAG.AGName
 
-        $AGTopology = Get-AGTopology -ServerInstance $PrimaryReplica -AvailabilityGroup $SecondaryAG.AGName
+        $AGTopology = Get-AGTopology -PrimaryServerInstance $PrimaryReplica -AvailabilityGroup $SecondaryAG.AGName
     
         if ($AGTopology.TotalSecondaryReplicas -lt 2) {
             #Less than 2 total replicas available

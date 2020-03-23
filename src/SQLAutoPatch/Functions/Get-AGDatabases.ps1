@@ -1,9 +1,13 @@
-Function Get-AllAGDatabaseReplicasOnServer {
+Function Get-AGDatabases {
     [cmdletbinding()]
     Param(
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        $ServerInstance
+        $ServerInstance,
+
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        $AvailabilityGroup
 
     )
 
@@ -29,16 +33,15 @@ Function Get-AllAGDatabaseReplicasOnServer {
         on          ars.replica_id = drs.replica_id
         join        sys.availability_replicas ar
         on          ar.replica_id = ars.replica_id
-        where       ar.replica_server_name = @@SERVERNAME
-        order by    ag.[name]
-                    ,adc.[database_name]
+        where       ag.[name] = '$AvailabilityGroup'
+        order by    adc.[database_name]
                     ,ars.role_desc asc;
 "@
 
     try {
         
-        $AllAGDBs = Invoke-Sqlcmd -ServerInstance $ServerInstance -Database master -Query $query -QueryTimeout 180 -ErrorAction Stop
-        return $AllAGDBs
+        $AGDBs = Invoke-Sqlcmd -ServerInstance $ServerInstance -Database master -Query $query -QueryTimeout 180 -ErrorAction Stop
+        return $AGDBs
     }
 
     catch {

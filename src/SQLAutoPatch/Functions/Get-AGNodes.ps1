@@ -21,7 +21,7 @@ Function Get-AGNodes {
 "@
 
     try {
-        $AGNodes = Invoke-Sqlcmd -ServerInstance $ServerInstance -query $query -Database master -ErrorAction Stop
+        $AGNodes = Invoke-Sqlcmd -ServerInstance $ServerInstance -query $query -Database master -QueryTimeout 60 -ErrorAction Stop
         return $AGNodes
         
     }
