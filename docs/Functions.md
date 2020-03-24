@@ -53,6 +53,7 @@ Server to set all synchronous_commit availability groups to asynchronous_commit
 -MaintainHAForAGs
 ```
 Automatically set another available asynchronous_commit replica in the topology to synchronous_commit to maintain HA for the AG
+Default = $true
 ```powershell
 -ScriptOnly
 ```
