@@ -11,7 +11,10 @@ Function Set-AGReplicaToSyncCommit {
 
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        $AvailabilityGroup
+        $AvailabilityGroup,
+
+        [Parameter(Mandatory = $false)]
+        [Switch]$ScriptOnly = $true
 
     )
   
@@ -28,12 +31,21 @@ Function Set-AGReplicaToSyncCommit {
 
 "@
 
+    if ($ScriptOnly) {
+        Write-Output "----Script Only mode----"
+        Write-Output "Script to execute on Server: [$PrimaryServer]"
+        Write-Output $QuerySetSync
+        Write-Output $QueryChangeFailoverMode
+        Write-Output "-----------------------"
+        return
+    }
 
     try {
         if ($PSCmdlet.ShouldProcess("$ReplicaServer - $AvailabilityGroup")) {
-            Write-Output "Testing - Would run on server: $PrimaryServer"
-            Write-Output $QuerySetSync
-            Write-Output $QueryChangeFailoverMode
+            
+            Invoke-Sqlcmd -ServerInstance $PrimaryServer -Database master -Query $QuerySetSync -QueryTimeout 60 -ErrorAction Stop
+            Invoke-Sqlcmd -ServerInstance $PrimaryServer -Database master -Query $QueryChangeFailoverMode -QueryTimeout 60 -ErrorAction Stop
+
         }
     }
     

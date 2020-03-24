@@ -7,7 +7,10 @@ Function Invoke-FailoverSQLCommand {
 
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        $AvailabilityGroup
+        $AvailabilityGroup,
+
+        [Parameter(Mandatory = $false)]
+        [Switch]$ScriptOnly = $true
 
     )
   
@@ -17,13 +20,19 @@ Function Invoke-FailoverSQLCommand {
 
 "@
 
-
+    if ($ScriptOnly){
+        Write-Output "----Script Only mode----"
+        Write-Output "Script to execute on Server: [$FailoverTargetServer]"
+        Write-Output $query
+        Write-Output "-----------------------"
+        return
+    }
 
     try {
         if ($PSCmdlet.ShouldProcess("FailoverTarget: $FailoverTargetServer - $AvailabilityGroup")) {
-            Write-Output "Testing - Would run on server: $FailoverTargetServer"
-            Write-Output $query
-            #Set query timeout to 60 seconds at least
+
+            Invoke-Sqlcmd -ServerInstance $FailoverTargetServer -Database master -Query $query -QueryTimeout 60 -ErrorAction Stop
+            
         }
     }
     

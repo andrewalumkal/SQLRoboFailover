@@ -3,7 +3,7 @@ Function Invoke-PostFailoverHealthPoll {
     Param(
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        $PrimaryServerInstance,
+        $ServerInstance,
 
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
@@ -21,11 +21,11 @@ Function Invoke-PostFailoverHealthPoll {
     )
 
 
-    Write-Output "Querying Server:[$PrimaryServerInstance] for AG health information..."
+    Write-Output "Querying Server:[$ServerInstance] for AG health information..."
     Write-Output ""
     
     $PollCount = 1
-    $UnHealthyDatabases = @(Get-UnHealthyAGDatabases -ServerInstance $PrimaryServerInstance -AvailabilityGroup $AvailabilityGroup)
+    $UnHealthyDatabases = @(Get-UnHealthyAGDatabases -ServerInstance $ServerInstance -AvailabilityGroup $AvailabilityGroup)
 
     while ($UnHealthyDatabases.Count -gt 0) {
 
@@ -48,10 +48,10 @@ Function Invoke-PostFailoverHealthPoll {
         Write-Output ""
         Start-Sleep -Seconds $PollIntervalSeconds
 
-        Write-Output "Querying Server:[$PrimaryServerInstance] for AG health information..."
+        Write-Output "Querying Server:[$ServerInstance] for AG health information..."
         Write-Output ""
         $UnHealthyDatabases = @()
-        $UnHealthyDatabases = @(Get-UnHealthyAGDatabases -ServerInstance $PrimaryServerInstance -AvailabilityGroup $AvailabilityGroup)
+        $UnHealthyDatabases = @(Get-UnHealthyAGDatabases -ServerInstance $ServerInstance -AvailabilityGroup $AvailabilityGroup)
        
     }                    
 

@@ -9,6 +9,9 @@ Function Set-AllSecondarySyncReplicasToAsync {
         [Switch]$MaintainHAForAGs = $true,
 
         [Parameter(Mandatory = $false)]
+        [Switch]$ScriptOnly = $true,
+
+        [Parameter(Mandatory = $false)]
         [Switch]$Confirm = $true
 
     )
@@ -61,7 +64,15 @@ Function Set-AllSecondarySyncReplicasToAsync {
             Write-Output "Setting $($SecondaryAG.AGName) to Asynchronous_commit mode on $ServerInstance ..."
             Write-Output ""
             Start-Sleep -Seconds 1
-            Set-AGReplicaToAsyncCommit -PrimaryServer $PrimaryReplica -ReplicaServer $ServerInstance -AvailabilityGroup $SecondaryAG.AGName -Confirm:$Confirm
+
+            if ($ScriptOnly) {
+                Set-AGReplicaToAsyncCommit -PrimaryServer $PrimaryReplica -ReplicaServer $ServerInstance -AvailabilityGroup $SecondaryAG.AGName -Confirm:$false -ScriptOnly:$ScriptOnly
+            }
+
+            else {
+                Set-AGReplicaToAsyncCommit -PrimaryServer $PrimaryReplica -ReplicaServer $ServerInstance -AvailabilityGroup $SecondaryAG.AGName -Confirm:$Confirm -ScriptOnly:$false
+            }
+            
         
         }
 
@@ -79,7 +90,14 @@ Function Set-AllSecondarySyncReplicasToAsync {
             Write-Output "Setting $($SecondaryAG.AGName) to Asynchronous_commit mode on $ServerInstance ..."
             Write-Output ""
             Start-Sleep -Seconds 1
-            Set-AGReplicaToAsyncCommit -PrimaryServer $PrimaryReplica -ReplicaServer $ServerInstance -AvailabilityGroup $SecondaryAG.AGName -Confirm:$Confirm
+
+            if ($ScriptOnly) {
+                Set-AGReplicaToAsyncCommit -PrimaryServer $PrimaryReplica -ReplicaServer $ServerInstance -AvailabilityGroup $SecondaryAG.AGName -Confirm:$false -ScriptOnly:$ScriptOnly
+            }
+
+            else {
+                Set-AGReplicaToAsyncCommit -PrimaryServer $PrimaryReplica -ReplicaServer $ServerInstance -AvailabilityGroup $SecondaryAG.AGName -Confirm:$Confirm -ScriptOnly:$false
+            }
         
         }
 
@@ -98,7 +116,16 @@ Function Set-AllSecondarySyncReplicasToAsync {
                 Write-Output "Setting replica to synchronous_commit..."
                 Write-Output ""
                 Start-Sleep -Seconds 1
-                Set-AGReplicaToSyncCommit -PrimaryServer $PrimaryReplica -ReplicaServer $AsyncServers[0] -AvailabilityGroup $SecondaryAG.AGName -Confirm:$Confirm
+
+                if ($ScriptOnly) {
+                    Set-AGReplicaToSyncCommit -PrimaryServer $PrimaryReplica -ReplicaServer $AsyncServers[0] -AvailabilityGroup $SecondaryAG.AGName -Confirm:$false -ScriptOnly:$ScriptOnly
+                }
+    
+                else {
+                    Set-AGReplicaToSyncCommit -PrimaryServer $PrimaryReplica -ReplicaServer $AsyncServers[0] -AvailabilityGroup $SecondaryAG.AGName -Confirm:$Confirm -ScriptOnly:$false
+                }
+
+                
         
             }
             
@@ -106,7 +133,14 @@ Function Set-AllSecondarySyncReplicasToAsync {
             Write-Output "Setting $($SecondaryAG.AGName) to Asynchronous_commit mode on $ServerInstance ..."
             Write-Output ""
             Start-Sleep -Seconds 1
-            Set-AGReplicaToAsyncCommit -PrimaryServer $PrimaryReplica -ReplicaServer $ServerInstance -AvailabilityGroup $SecondaryAG.AGName -Confirm:$Confirm
+
+            if ($ScriptOnly) {
+                Set-AGReplicaToAsyncCommit -PrimaryServer $PrimaryReplica -ReplicaServer $ServerInstance -AvailabilityGroup $SecondaryAG.AGName -Confirm:$false -ScriptOnly:$ScriptOnly
+            }
+
+            else {
+                Set-AGReplicaToAsyncCommit -PrimaryServer $PrimaryReplica -ReplicaServer $ServerInstance -AvailabilityGroup $SecondaryAG.AGName -Confirm:$Confirm -ScriptOnly:$false
+            }
         
         }
         else {

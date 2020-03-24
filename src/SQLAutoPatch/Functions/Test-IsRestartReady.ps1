@@ -41,12 +41,18 @@ Function Test-IsRestartReady {
         }
     
         #Check DB Level AG health
-        $IsRestartReady = Test-AllAGDatabasesOnServerHealthy -ServerInstance $ServerInstance 
+        [bool]$TestAGDBState = 0
+        $TestAGDBState = Test-AllAGDatabasesOnServerHealthy -ServerInstance $ServerInstance
+
+        if(!$TestAGDBState){
+            Write-Verbose "Found AG databases that are not in a healthy state"
+            $IsRestartReady = 0
+            return $IsRestartReady
+        }
+        
 
     }
     
-    
-
     return $IsRestartReady
     
 }

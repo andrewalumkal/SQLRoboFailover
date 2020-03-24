@@ -11,7 +11,10 @@ Function Set-AGReplicaToAsyncCommit {
 
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        $AvailabilityGroup
+        $AvailabilityGroup,
+
+        [Parameter(Mandatory = $false)]
+        [Switch]$ScriptOnly = $true
 
     )
   
@@ -27,15 +30,22 @@ Function Set-AGReplicaToAsyncCommit {
 
 "@
 
-
-
+    if ($ScriptOnly){
+        Write-Output "----Script Only mode----"
+        Write-Output "Script to execute on Server: [$PrimaryServer]"
+        Write-Output $QueryChangeFailoverMode
+        Write-Output $QuerySetAsync
+        Write-Output "-----------------------"
+        return
+    }
 
     try {
 
         if ($PSCmdlet.ShouldProcess("$ReplicaServer - $AvailabilityGroup")) {
-            Write-Output "Testing - Would run on server: $PrimaryServer"
-            Write-Output $QueryChangeFailoverMode
-            Write-Output $QuerySetAsync
+
+            Invoke-Sqlcmd -ServerInstance $PrimaryServer -Database master -Query $QueryChangeFailoverMode -QueryTimeout 60 -ErrorAction Stop
+            Invoke-Sqlcmd -ServerInstance $PrimaryServer -Database master -Query $QuerySetAsync -QueryTimeout 60 -ErrorAction Stop
+
         }
     }
     

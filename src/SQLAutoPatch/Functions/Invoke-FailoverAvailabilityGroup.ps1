@@ -7,7 +7,10 @@ Function Invoke-FailoverAvailabilityGroup {
 
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        $AvailabilityGroup
+        $AvailabilityGroup,
+
+        [Parameter(Mandatory = $false)]
+        [Switch]$ScriptOnly = $true
 
     )
 
@@ -65,13 +68,18 @@ Function Invoke-FailoverAvailabilityGroup {
     Write-Output ""
     Start-Sleep -Seconds 2
 
+    if ($ScriptOnly){
+        Invoke-FailoverSQLCommand -FailoverTargetServer $FailoverTargetServer -AvailabilityGroup $AvailabilityGroup -Confirm:$false -ScriptOnly:$ScriptOnly
+        return
+    }
+
     if ($PSCmdlet.ShouldProcess("FailoverTarget: $FailoverTargetServer - $AvailabilityGroup")) {
 
         Write-Output "Starting failover for AG:[$AvailabilityGroup] to Server:[$FailoverTargetServer]..."
         Write-Output ""
         Start-Sleep -Seconds 1.5
 
-        Invoke-FailoverSQLCommand -FailoverTargetServer $FailoverTargetServer -AvailabilityGroup $AvailabilityGroup -Confirm:$false
+        Invoke-FailoverSQLCommand -FailoverTargetServer $FailoverTargetServer -AvailabilityGroup $AvailabilityGroup -Confirm:$false -ScriptOnly:$false
 
         Write-Output "Failover command successfully executed on Server:[$FailoverTargetServer]..."
         Write-Output ""
@@ -81,7 +89,7 @@ Function Invoke-FailoverAvailabilityGroup {
         Write-Output "Running post failover checks for AG:[$AvailabilityGroup]"
         Write-Output ""
 
-        Invoke-PostFailoverHealthPoll -PrimaryServerInstance $FailoverTargetServer -AvailabilityGroup $AvailabilityGroup -MaxPollCount 5 -PollIntervalSeconds 30
+        Invoke-PostFailoverHealthPoll -ServerInstance $FailoverTargetServer -AvailabilityGroup $AvailabilityGroup -MaxPollCount 5 -PollIntervalSeconds 30
 
 
     }
