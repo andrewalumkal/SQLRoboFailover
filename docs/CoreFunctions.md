@@ -173,7 +173,7 @@ Checks for the following:
 - Any unhealthy AG databases on the server
 - If `-RunExtendedChecks` is enabled, function will also find the primary replica for all *secondary* AGs on the server and check the entire topology for unhealthy AG databases. This check is already done by default for AGs that are primary on the server.
 
-If any of the conditions are met, the function will return false. Run function with `-Verbose` to print reason for failure.
+If any of the conditions are met, the function will return false.
 
 ### Parameters
 ```powershell
