@@ -167,7 +167,7 @@ Server to run test
 Test-AllAGDatabasesOnServerHealthy -ServerInstance <ServerInstance> -RunExtendedChecks:$true -Verbose
 
 ```
-Checks if all AG databases on the Sql Server instance are are healthy. Returns a boolean value.
+Checks if all AG databases on the Sql Server instance are healthy. Returns a boolean value.
 
 Checks for the following:
 - Any unhealthy AG databases on the server
