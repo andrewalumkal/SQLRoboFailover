@@ -1,3 +1,9 @@
+# Patch Functions
+
+## Update-DbaInstance
+
+The core patching function used in this solution is `Update-DbaInstance` by [dbatools.io](https://dbatools.io/). For more information on this function, please check this [link](https://docs.dbatools.io/#Update-DbaInstance).
+
 # Failover Functions
 
 ## Invoke-FailoverAvailabilityGroup
