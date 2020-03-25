@@ -36,7 +36,6 @@ Default = $true
 ## Set-AllSecondarySyncReplicasToAsync
 ```powershell
 Set-AllSecondarySyncReplicasToAsync -ServerInstance <ServerInstance> -MaintainHAForAGs:$true -ScriptOnly:$false -Confirm:$true
-
 ```
 Sets all *secondary* synchronous_commit availability groups on a specified server to asynchronous commit. Useful for prepping a replica to be ready for patching / restarts.
 - Finds all *secondary* synchronous_commit availability groups on the server
@@ -54,6 +53,72 @@ Server to set all synchronous_commit availability groups to asynchronous_commit
 ```
 Automatically set another available asynchronous_commit replica in the topology to synchronous_commit to maintain HA for the AG.
 Default = $true
+```powershell
+-ScriptOnly
+```
+Script out all actions. No actions will actully be performed.
+Default = $true
+
+```powershell
+-Confirm
+```
+Prompt for confirmation prior to taking action.
+Default = $true
+
+## Set-AGReplicaToSyncCommit
+```powershell
+Set-AGReplicaToSyncCommit -PrimaryServer <PrimaryServer> -ReplicaServer <ReplicaServer> -AvailabilityGroup <AGName> -ScriptOnly:$false -Confirm:$true
+```
+Sets an AG replica to synchronous_commit + automatic failover mode.
+
+```powershell
+-PrimaryServer
+```
+Server that hosts the primary AG replica
+
+```powershell
+-ReplicaServer
+```
+AG replica to set to synchronous_commit
+
+```powershell
+-AvailabilityGroup
+```
+Availability Group Name
+
+```powershell
+-ScriptOnly
+```
+Script out all actions. No actions will actully be performed.
+Default = $true
+
+```powershell
+-Confirm
+```
+Prompt for confirmation prior to taking action.
+Default = $true
+
+## Set-AGReplicaToAsyncCommit
+```powershell
+Set-AGReplicaToAsyncCommit -PrimaryServer <PrimaryServer> -ReplicaServer <ReplicaServer> -AvailabilityGroup <AGName> -ScriptOnly:$false -Confirm:$true
+```
+Sets an AG replica to asynchronous_commit + manual failover mode.
+
+```powershell
+-PrimaryServer
+```
+Server that hosts the primary AG replica
+
+```powershell
+-ReplicaServer
+```
+AG replica to set to asynchronous_commit
+
+```powershell
+-AvailabilityGroup
+```
+Availability Group Name
+
 ```powershell
 -ScriptOnly
 ```
