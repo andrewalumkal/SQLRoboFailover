@@ -46,7 +46,7 @@ Set-AllSecondarySyncReplicasToAsync -ServerInstance <ServerInstance> -MaintainHA
 Sets all *secondary* synchronous_commit availability groups on a specified server to asynchronous commit. Useful for prepping a replica to be ready for patching / restarts.
 - Finds all *secondary* synchronous_commit availability groups on the server
 - Finds the primary replica for each AG and checks AG topology (set commands need to be run on the primary replica)
-- Sets the availability groups to asynchronous_commit. If `-MaintainsHAForAGs:$true` the function will set another available asynchronous_commit replica in the topology to synchronous_commit to maintain HA.
+- Sets the availability groups to asynchronous_commit. If `-MaintainsHAForAGs:$true` the function will set another available asynchronous_commit replica in the topology to synchronous_commit if replica is available.
 
 ### Parameters
 ```powershell
@@ -57,7 +57,7 @@ Server to set all synchronous_commit availability groups to asynchronous_commit
 ```powershell
 -MaintainHAForAGs
 ```
-Automatically set another available asynchronous_commit replica in the topology to synchronous_commit to maintain HA for the AG.
+Automatically set another available asynchronous_commit replica in the topology to synchronous_commit to maintain HA for the AG. Will only be performed on AGs with an available asynchronous_commit replica.
 Default = $true
 ```powershell
 -ScriptOnly
