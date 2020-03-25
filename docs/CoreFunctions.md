@@ -171,7 +171,7 @@ Checks if all AG databases on the Sql Server instance are healthy. Returns a boo
 
 Checks for the following:
 - Any unhealthy AG databases on the server
-- If `-RunExtendedChecks` is enabled, function will also find the primary replica for all *secondary* AGs on the server and check the entire topology for unhealthy AG databases. This check is already done by default if an AG is the primary replica on the server.
+- If `-RunExtendedChecks` is enabled, function will also find the primary replica for all *secondary* AGs on the server and check the entire topology for unhealthy AG databases. This check is already done by default for AGs that are primary on the server.
 
 If any of the conditions are met, the function will return false. Run function with `-Verbose` to print reason for failure.
 
