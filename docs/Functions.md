@@ -28,7 +28,7 @@ Default = $true
 ```powershell
 -Confirm
 ```
-Prompt for confirmation prior to taking action
+Prompt for confirmation prior to taking action.
 Default = $true
 
 # Availability Group Setting Functions
@@ -52,7 +52,7 @@ Server to set all synchronous_commit availability groups to asynchronous_commit
 ```powershell
 -MaintainHAForAGs
 ```
-Automatically set another available asynchronous_commit replica in the topology to synchronous_commit to maintain HA for the AG
+Automatically set another available asynchronous_commit replica in the topology to synchronous_commit to maintain HA for the AG.
 Default = $true
 ```powershell
 -ScriptOnly
@@ -63,5 +63,54 @@ Default = $true
 ```powershell
 -Confirm
 ```
-Prompt for confirmation prior to taking action
+Prompt for confirmation prior to taking action.
 Default = $true
+
+# Health Test Functions
+## Test-IsRestartReady
+
+```powershell
+Test-IsRestartReady -ServerInstance <ServerInstance> -Verbose
+
+```
+Checks if a server is ready to restart. Returns a boolean value.
+
+Checks for the following:
+- Any unhealthy databases on the instance. (Databases that are not in an online, restoring, or offline state)
+- Any AG replicas that are in a primary role
+- Any AG replicas that are in a synchronous_commit role
+- Any AG replicas that are not in a connected state
+- Any unhealthy AG databases on the server
+
+If any of the conditions are met, the function will return false. Run function with `-Verbose` to print reason for failure.
+
+### Parameters
+```powershell
+-ServerInstance
+```
+Server to run test
+
+## Test-AllAGDatabasesOnServerHealthy
+
+```powershell
+Test-AllAGDatabasesOnServerHealthy -ServerInstance <ServerInstance> -RunExtendedChecks:$true -Verbose
+
+```
+Checks if all AG databases on the Sql Server instance are are healthy. Returns a boolean value.
+
+Checks for the following:
+- Any unhealthy AG databases on the server
+- If `-RunExtendedChecks` is enabled, function will also find the primary replica for all *secondary* AGs on the server and check the entire topology for unhealthy AG databases. This check is already done by default if an AG is the primary replica on the server.
+
+If any of the conditions are met, the function will return false. Run function with `-Verbose` to print reason for failure.
+
+### Parameters
+```powershell
+-ServerInstance
+```
+Server to run test
+
+```powershell
+-RunExtendedChecks
+```
+Finds the primary replica for all *secondary* AGs on the server and check the entire topology for unhealthy AG databases. This check is already done by default if an AG is the primary replica on the server.
