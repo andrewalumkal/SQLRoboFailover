@@ -4,7 +4,7 @@ All in one solution to failover AlwaysOn Availability Groups in SQL Server.
 
 Functions to run comprehensive health checks, failover availability groups, set AG replicas to sync / async modes. Can be combined with the [Update-DbaInstance](https://docs.dbatools.io/#Update-DbaInstance) function for a fully automated patching solution. 
 
-Requires the `SqlServer` module.
+Requires the `SqlServer` module.  
 Optional: Install [dbatools](https://dbatools.io/) module for patching functionality.
 
 ## Core Functions
