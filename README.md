@@ -30,7 +30,7 @@ Comprehensive health checks will be completed for each AG pre and post failover 
 Invoke-FailoverAllPrimaryAGsOnServer -ServerInstance <ServerName> -RunPostFailoverChecks -ScriptOnly:$false -Confirm
 ```
 
-#### Set all synchronous_commit Availability Groups to asynchronous_commit
+#### Set all secondary synchronous_commit AGs to asynchronous_commit
 ```powershell
 Set-AllSecondarySyncReplicasToAsync -ServerInstance <ServerInstance> -MaintainHAForAGs -ScriptOnly:$false -Confirm
 ```
@@ -52,7 +52,7 @@ if ($IsRestartReady){
 [bool]$IsSQLServerHealthy = Test-IsSQLServerHealthy -ServerInstance <ServerInstance> -RunExtendedAGChecks -Verbose
 ```
 
-#### Set all asynchronous_commit Availability Groups back to synchronous_commit
+#### Set all secondary asynchronous_commit AGs back to synchronous_commit
 ```powershell
 if ($IsSQLServerHealthy){
   Set-AllSecondaryAsyncReplicasToSync -ServerInstance <ServerInstance> -ForceSingleSyncCopy -ScriptOnly:$false -Confirm
