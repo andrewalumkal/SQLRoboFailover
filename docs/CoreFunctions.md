@@ -152,7 +152,7 @@ Default = $true
 ```powershell
 Set-AllSecondarySyncReplicasToAsync -ServerInstance <ServerInstance> -MaintainHAForAGs:$true -ScriptOnly:$false -Confirm:$true
 ```
-Sets all *secondary* healthy synchronous_commit availability groups on a specified server to asynchronous commit. Useful for prepping a replica to be ready for patching / restarts.
+Sets all healthy *secondary* synchronous_commit availability groups on a specified server to asynchronous commit. Useful for prepping a replica to be ready for patching / restarts.
 - Finds all *secondary* synchronous_commit availability groups on the server
 - Finds the primary replica for each AG and checks AG topology (set commands need to be run on the primary replica)
 - Sets the availability groups to asynchronous_commit. If `-MaintainsHAForAGs:$true` the function will set another available asynchronous_commit replica in the topology to synchronous_commit if replica is available.
@@ -185,7 +185,7 @@ Default = $true
 ```powershell
 Set-AllSecondaryAsyncReplicasToSync -ServerInstance <ServerInstance> -ExcludeAGs "AG4,AG7" -ForceSingleSyncCopy:$true -ScriptOnly:$false -Confirm:$true
 ```
-Sets all *secondary* healthy asynchronous_commit availability groups on a specified server to synchronous commit. Useful for setting back a replica to its previous state after patching / restart is complete.
+Sets all healthy *secondary* asynchronous_commit availability groups on a specified server to synchronous commit. Useful for setting back a replica to its previous state after patching / restart is complete.
 - Finds all *secondary* asynchronous_commit availability groups on the server. Excludes any AGs specified in `-ExcludeAGs`
 - Finds the primary replica for each AG and checks AG topology (set commands need to be run on the primary replica)
 - Sets the availability groups to synchronous_commit
