@@ -267,4 +267,4 @@ Server to run test
 ```powershell
 -RunExtendedChecks
 ```
-Finds the primary replica for all *secondary* AGs on the server and check the entire topology for unhealthy AG databases. This check is already done by default if an AG is the primary replica on the server. Default = $false
+Finds the primary replica for all *secondary* AGs on the server and check the entire topology for unhealthy AG databases. This check is already done by default for AGs that are primary on the server. Default = $false
