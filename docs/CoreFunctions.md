@@ -47,7 +47,7 @@ Default = $true
 ```powershell
 Invoke-FailoverAllPrimaryAGsOnServer -ServerInstance <ServerName> -ExcludeAGs "AG4,AG5" -AvailabilityGroup <AGName> -RunPostFailoverChecks:$true -ScriptOnly:$false -Confirm:$true
 ```
-Failover all primary Availability Groups to an available synchronous_commit replica. 
+Failover all primary Availability Groups to an available synchronous_commit replica. Excludes any AGs specified in `-ExcludeAGs`
 - Runs all health checks prior to failover for all AGs (all databases are healthy, synchronized state) 
 - Performs failover one at a time
 - If `-RunPostFailoverChecks` is enabled - runs post failover checks to ensure all databases are healthy on all replicas after each failover. Polling mechanism built in to keep polling health state if found unhealthy. Health status will be printed to console on every poll
@@ -158,7 +158,7 @@ Default = $true
 Set-AllSecondarySyncReplicasToAsync -ServerInstance <ServerInstance> -ExcludeAGs "AG4, AG5" -MaintainHAForAGs:$true -ScriptOnly:$false -Confirm:$true
 ```
 Sets all healthy *secondary* synchronous_commit availability groups on a specified server to asynchronous commit. Useful for prepping a replica to be ready for patching / restarts.
-- Finds all *secondary* synchronous_commit availability groups on the server
+- Finds all *secondary* synchronous_commit availability groups on the server. Excludes any AGs specified in `-ExcludeAGs`
 - Finds the primary replica for each AG and checks AG topology (set commands need to be run on the primary replica)
 - Sets the availability groups to asynchronous_commit. If `-MaintainsHAForAGs:$true` the function will set another asynchronous_commit replica in the topology to synchronous_commit *if available*.
 
