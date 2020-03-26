@@ -30,13 +30,14 @@ Function Set-AllSecondaryAsyncReplicasToSync {
             Where-Object -Property ReplicaHealth -eq "HEALTHY" | `
             Where-Object -Property ReplicaConnectedState -eq "CONNECTED")
 
-    if ($AllSecondaryAsyncAGs.Count -eq 0) {
+    $ExcludeList = @($ExcludeAGs -split "," | foreach { $_.Trim() })
+    $SecondaryAsyncAGs = @($AllSecondaryAsyncAGs | Where-Object { $ExcludeList -notcontains $_.AGName })            
+
+    if ($SecondaryAsyncAGs.Count -eq 0) {
         Write-Output "No secondary asynchronous_commit AGs found on $ServerInstance"
         return
     }
 
-    $ExcludeList = @($ExcludeAGs -split "," | foreach { $_.Trim() })
-    $SecondaryAsyncAGs = @($AllSecondaryAsyncAGs | Where-Object { $ExcludeList -notcontains $_.AGName })
 
     Write-Output ""
     Write-Output "-----------------------------------"

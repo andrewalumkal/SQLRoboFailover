@@ -6,6 +6,10 @@ Function Invoke-FailoverAllPrimaryAGsOnServer {
         $ServerInstance,
 
         [Parameter(Mandatory = $false)]
+        [ValidateNotNullOrEmpty()]
+        $ExcludeAGs,
+
+        [Parameter(Mandatory = $false)]
         [Switch]$RunPostFailoverChecks = $true,
 
         [Parameter(Mandatory = $false)]
@@ -17,13 +21,17 @@ Function Invoke-FailoverAllPrimaryAGsOnServer {
     )
 
     #Ignore DAGs / ReadScale AGs
-    $PrimaryAGs = @(Get-AllPrimaryAvailabilityGroupReplicas -ServerInstance $ServerInstance | Where-Object -Property ClusterType -eq "wsfc")
+    $AllPrimaryAGs = @(Get-AllPrimaryAvailabilityGroupReplicas -ServerInstance $ServerInstance | Where-Object -Property ClusterType -eq "wsfc")
+
+    $ExcludeList = @($ExcludeAGs -split "," | foreach { $_.Trim() })
+    $PrimaryAGs = @($AllPrimaryAGs | Where-Object { $ExcludeList -notcontains $_.AGName })
 
     if ($PrimaryAGs.Count -eq 0) {
         Write-Output "No Primary availability groups found on this server"
         Write-Output ""
         return
     }
+
 
     Write-Output ""
     Write-Output "-----------------------------------"

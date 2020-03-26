@@ -6,6 +6,10 @@ Function Set-AllSecondarySyncReplicasToAsync {
         $ServerInstance,
 
         [Parameter(Mandatory = $false)]
+        [ValidateNotNullOrEmpty()]
+        $ExcludeAGs,
+
+        [Parameter(Mandatory = $false)]
         [Switch]$MaintainHAForAGs = $true,
 
         [Parameter(Mandatory = $false)]
@@ -21,10 +25,13 @@ Function Set-AllSecondarySyncReplicasToAsync {
     $AllAGReplicas = @(Get-AvailabilityGroupsOnServer -ServerInstance $ServerInstance | Where-Object -Property ClusterType -eq "wsfc")
 
     #Find all healthy sync commit secondary AGs
-    $SecondarySyncAGs = @($AllAGReplicas | Where-Object -Property ReplicaRole -eq "SECONDARY" | `
+    $AllSecondarySyncAGs = @($AllAGReplicas | Where-Object -Property ReplicaRole -eq "SECONDARY" | `
             Where-Object -Property AvailabilityMode -eq "SYNCHRONOUS_COMMIT" | `
             Where-Object -Property ReplicaHealth -eq "HEALTHY" | `
             Where-Object -Property ReplicaConnectedState -eq "CONNECTED")
+
+    $ExcludeList = @($ExcludeAGs -split "," | foreach { $_.Trim() })
+    $SecondarySyncAGs = @($AllSecondarySyncAGs | Where-Object { $ExcludeList -notcontains $_.AGName })   
 
     if ($SecondarySyncAGs.Count -eq 0) {
         Write-Output "No secondary synchronous_commit AGs found on $ServerInstance"
