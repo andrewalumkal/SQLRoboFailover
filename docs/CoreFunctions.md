@@ -4,6 +4,8 @@
 
 The core patching function used in this solution is `Update-DbaInstance` by [dbatools.io](https://dbatools.io/). For more information on this function, please check this [link](https://docs.dbatools.io/#Update-DbaInstance).
 
+--------------------------------------------------------------------------------------------------------------
+
 # Failover Functions
 
 ## Invoke-FailoverAvailabilityGroup
@@ -42,6 +44,7 @@ Default = $true
 ```
 Prompt for confirmation prior to taking action.
 Default = $true
+--------------------------------------------------------------------------------------------------------------
 
 ## Invoke-FailoverAllPrimaryAGsOnServer
 ```powershell
@@ -79,6 +82,7 @@ Default = $true
 ```
 Prompt for confirmation prior to taking action.
 Default = $true
+--------------------------------------------------------------------------------------------------------------
 
 # Availability Group Setting Functions
 
@@ -114,6 +118,7 @@ Default = $true
 ```
 Prompt for confirmation prior to taking action.
 Default = $true
+--------------------------------------------------------------------------------------------------------------
 
 ## Set-AGReplicaToAsyncCommit
 ```powershell
@@ -147,6 +152,7 @@ Default = $true
 ```
 Prompt for confirmation prior to taking action.
 Default = $true
+--------------------------------------------------------------------------------------------------------------
 
 ## Set-AllSecondarySyncReplicasToAsync
 ```powershell
@@ -185,6 +191,7 @@ Default = $true
 ```
 Prompt for confirmation prior to taking action.
 Default = $true
+--------------------------------------------------------------------------------------------------------------
 
 ## Set-AllSecondaryAsyncReplicasToSync
 ```powershell
@@ -224,6 +231,7 @@ Default = $true
 ```
 Prompt for confirmation prior to taking action.
 Default = $true
+--------------------------------------------------------------------------------------------------------------
 
 # Health Test Functions
 ## Test-IsRestartReady
@@ -248,6 +256,7 @@ If any of the conditions are met, the function will return false. Run function w
 -ServerInstance
 ```
 Server to run test
+--------------------------------------------------------------------------------------------------------------
 
 ## Test-AllAGDatabasesOnServerHealthy
 
@@ -273,3 +282,5 @@ Server to run test
 -RunExtendedChecks
 ```
 Finds the primary replica for all *secondary* AGs on the server and check the entire topology for unhealthy AG databases. This check is already done by default for AGs that are primary on the server. Default = $false
+--------------------------------------------------------------------------------------------------------------
+
