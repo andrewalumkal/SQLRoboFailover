@@ -44,6 +44,7 @@ Default = $true
 ```
 Prompt for confirmation prior to taking action.
 Default = $true
+
 --------------------------------------------------------------------------------------------------------------
 
 ## Invoke-FailoverAllPrimaryAGsOnServer
@@ -82,6 +83,7 @@ Default = $true
 ```
 Prompt for confirmation prior to taking action.
 Default = $true
+
 --------------------------------------------------------------------------------------------------------------
 
 # Availability Group Setting Functions
@@ -118,6 +120,7 @@ Default = $true
 ```
 Prompt for confirmation prior to taking action.
 Default = $true
+
 --------------------------------------------------------------------------------------------------------------
 
 ## Set-AGReplicaToAsyncCommit
@@ -152,6 +155,7 @@ Default = $true
 ```
 Prompt for confirmation prior to taking action.
 Default = $true
+
 --------------------------------------------------------------------------------------------------------------
 
 ## Set-AllSecondarySyncReplicasToAsync
@@ -191,6 +195,7 @@ Default = $true
 ```
 Prompt for confirmation prior to taking action.
 Default = $true
+
 --------------------------------------------------------------------------------------------------------------
 
 ## Set-AllSecondaryAsyncReplicasToSync
@@ -231,6 +236,7 @@ Default = $true
 ```
 Prompt for confirmation prior to taking action.
 Default = $true
+
 --------------------------------------------------------------------------------------------------------------
 
 # Health Test Functions
@@ -256,6 +262,7 @@ If any of the conditions are met, the function will return false. Run function w
 -ServerInstance
 ```
 Server to run test
+
 --------------------------------------------------------------------------------------------------------------
 
 ## Test-AllAGDatabasesOnServerHealthy
@@ -282,5 +289,6 @@ Server to run test
 -RunExtendedChecks
 ```
 Finds the primary replica for all *secondary* AGs on the server and check the entire topology for unhealthy AG databases. This check is already done by default for AGs that are primary on the server. Default = $false
+
 --------------------------------------------------------------------------------------------------------------
 
