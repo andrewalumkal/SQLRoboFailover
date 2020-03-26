@@ -13,13 +13,15 @@ This solution is built to be flexible. Functions can be pieced together to build
 
 ## Example Usage
 
-Import the module.
+### Prepping a server for patching
+
+#### Import the module
 
 ```powershell
 Import-Module .\src\SQLRoboFailover -Force
 ```
 
-### Prepping a server for patching
+#### Failover all Primary AGs to an available sync commit replica
 ```powershell
 Invoke-FailoverAllPrimaryAGsOnServer -ServerInstance <ServerName> -RunPostFailoverChecks -ScriptOnly:$false -Confirm
 ```
