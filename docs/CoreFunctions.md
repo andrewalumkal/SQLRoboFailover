@@ -233,7 +233,7 @@ Checks for the following:
 - Any unhealthy databases on the instance. (Databases that are not in an online, restoring, or offline state)
 - Any AG replicas that are in a primary role
 - Any AG replicas that are in a synchronous_commit role
-- Any AG replicas that are not in a connected state
+- Any AG replicas that are not in a healthy, connected state
 - Any unhealthy AG databases on the server
 
 If any of the conditions are met, the function will return false. Run function with `-Verbose` to print reason for failure.
