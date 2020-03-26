@@ -30,31 +30,31 @@ Comprehensive health checks will be completed for each AG pre and post failover 
 Invoke-FailoverAllPrimaryAGsOnServer -ServerInstance <ServerName> -RunPostFailoverChecks -ScriptOnly:$false -Confirm
 ```
 
-### Set all synchronous_commit Availability Groups to asynchronous_commit
+#### Set all synchronous_commit Availability Groups to asynchronous_commit
 ```powershell
 Set-AllSecondarySyncReplicasToAsync -ServerInstance <ServerInstance> -MaintainHAForAGs -ScriptOnly:$false -Confirm
 ```
 
-### Test if server is ready to be patched or restarted
+#### Test if server is ready to be patched or restarted
 ```powershell
 [bool]$IsRestartReady = Test-IsRestartReady -ServerInstance <ServerInstance> -Verbose
 ```
 
-### Patch server using dbatools module
+#### Patch server using dbatools module
 ```powershell
 if ($IsRestartReady){
   Update-DbaInstance -ComputerName <ServerInsance> -Version <PatchVersion> -Path \\network\share
 }
 ```
 
-### Check server health after patching
+#### Check server health after patching
 `Test-IsRestartReady` can be re-run post-patching / restart as it runs all health checks against databases / AGs.
 
 ```powershell
 [bool]$IsServerHealthy = Test-IsRestartReady -ServerInstance <ServerInstance> -Verbose
 ```
 
-### Set all asynchronous_commit Availability Groups back to synchronous_commit
+#### Set all asynchronous_commit Availability Groups back to synchronous_commit
 ```powershell
 if ($IsServerHealthy){
   Set-AllSecondaryAsyncReplicasToSync -ServerInstance <ServerInstance> -ForceSingleSyncCopy -ScriptOnly:$false -Confirm
