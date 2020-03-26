@@ -9,72 +9,35 @@ Optional: Install [dbatools](https://dbatools.io/) module for patching functiona
 
 ## Core Functions
 
-This solution is built to be modular to be flexible. Detailed documentation to core functions can be found [here](./docs/CoreFunctions.md). 
+This solution is built to be flexible. Functions can be pieced together to build a fully automated solution. Detailed documentation to core functions can be found [here](./docs/CoreFunctions.md). 
 
 ## Example Usage
 
 Import the module.
 
 ```powershell
-Import-Module .\src\Vex -Force
+Import-Module .\src\SQLRoboFailover -Force
 ```
 
-The config repository (tests / environments) is seperated by design so it can be source controlled independently. Set the path to the Config repository
+### Prepping a server for patching
 ```powershell
-$ConfigRepoPath = "C:\src\VexConfigRepo"
+Invoke-FailoverAllPrimaryAGsOnServer -ServerInstance <ServerName> -RunPostFailoverChecks -ScriptOnly:$false -Confirm
 ```
-
-#### Run all tests with default parameters
+---------------------------------
+### Set all synchronous_commit Availability Groups to asynchronous_commit
 ```powershell
-Invoke-VexTest -ConfigRepoPath $ConfigRepoPath
+Set-AllSecondarySyncReplicasToAsync -ServerInstance <ServerInstance> -MaintainHAForAGs -ScriptOnly:$false -Confirm
 ```
 
-#### Run all tests tagged with "Daily" schedule
+
+### Set all synchronous_commit Availability Groups to asynchronous_commit
 ```powershell
-$Schedule = "Daily"
-Invoke-VexTest -ConfigRepoPath $ConfigRepoPath -RunType "Schedule" -RunTypeParams $Schedule -OutputTarget "None" -Show All
+Set-AllSecondarySyncReplicasToAsync -ServerInstance <ServerInstance> -MaintainHAForAGs -ScriptOnly:$false -Confirm
 ```
 
-#### Run specific tests
+### Set all synchronous_commit Availability Groups to asynchronous_commit
 ```powershell
-$TestList = ("Team1\OneEqualsOne.tests.ps1", "Team2\TwoEqualsTwo.tests.ps1")
-Invoke-VexTest -ConfigRepoPath $ConfigRepoPath -RunType "TestList" -RunTypeParams $TestList -Show All
+Set-AllSecondarySyncReplicasToAsync -ServerInstance <ServerInstance> -MaintainHAForAGs -ScriptOnly:$false -Confirm
 ```
-## Vex Parameters
-
-#### -ConfigRepoPath
-Path to VexConfigRepo. Use the same file names and directory structure as provided in the sample repo (.\VexConfigRepo). 
-For more information on the VexConfigRepo, refer to the [the documentation](./docs/VexConfigRepo.md)
-
-#### -RunType
-Type of test to run. Supported inputs:
-
-- All (default) - Run tests found in all .config.json files in VexConfigRepo (.\VexConfigRepo\TestConfig)
-- Schedule - Run all tests tagged with a specific schedule in VexConfigRepo
-- TestList - Pass in a list of tests to run. Tests will only run if configured in ConfigRepo (.\VexConfigRepo\TestConfig)
 
 
-#### -RunTypeParams
-Parameters for RunTypes. Supported Inputs:
-- If `-RunType="All"`, this parameter is not required/valid. All tests will be run.
-- If `-RunType="Schedule"`, pass in a single value (Weekly / Daily / Hourly / Mon2pm). This can be any value - Vex will check the test config for any tests with the same tagged value
-- If `-RunType="TestList"`, pass in a list of tests. Example:
-```powershell
-$TestList = ("Team1\Team1Test.tests.ps1", "Team2\Team2Test.tests.ps1")
-```
-	
-#### -OutputTarget
-Supported Inputs:
-- None – Don’t save test results (Default)
-- OMS - Save test results to Azure Log Analytics (OMS)
-- Database (TBA) - Save test results to SQL Server (Not yet supported)
-
-#### -Show
-Different levels of ouput detail to the console (a Pester parameter).
-https://github.com/pester/Pester/wiki/Invoke%E2%80%90Pester#show
-
-Supported Inputs:
-- All
-- None
-- Summary(default)
-- Failed
