@@ -18,7 +18,7 @@ Function Set-AllSecondarySyncReplicasToAsync {
 
     
     #Ignore DAG/ReadScale replicas
-    $AllAGReplicas = Get-AvailabilityGroupsOnServer -ServerInstance $ServerInstance | Where-Object -Property ClusterType -eq "wsfc"
+    $AllAGReplicas = @(Get-AvailabilityGroupsOnServer -ServerInstance $ServerInstance | Where-Object -Property ClusterType -eq "wsfc")
 
     #Find all healthy sync commit secondary AGs
     $SecondarySyncAGs = @($AllAGReplicas | Where-Object -Property ReplicaRole -eq "SECONDARY" | `
@@ -53,12 +53,13 @@ Function Set-AllSecondarySyncReplicasToAsync {
     
         if ($AGTopology.TotalSecondaryReplicas -lt 2) {
             #Less than 2 total replicas available
-
-            $InfoMessage = "No other replica available to set to synchronous for $($SecondaryAG.AGName) . Total Replicas for this AG = "
-            $InfoMessage += $AGTopology.TotalReplicas
-            Write-Output $InfoMessage
-            Write-Output ""
-            Start-Sleep -Seconds 1
+            if ($MaintainHAForAGs) {
+                $InfoMessage = "No other replica available to set to synchronous for $($SecondaryAG.AGName) . Total Replicas for this AG = "
+                $InfoMessage += $AGTopology.TotalReplicas
+                Write-Output $InfoMessage
+                Write-Output ""
+                Start-Sleep -Seconds 1
+            }
 
             #Make Async
             Write-Output "Setting $($SecondaryAG.AGName) to Asynchronous_commit mode on $ServerInstance ..."
@@ -77,15 +78,17 @@ Function Set-AllSecondarySyncReplicasToAsync {
         }
 
         elseif ($AGTopology.SyncCommitSecondariesCount -gt 1) {
-            #More than one sync commit replicas found
-            Write-Output "More than one synchronous_commit secondaries found for AG: $($SecondaryAG.AGName)"
-            Write-Output ""
-            Write-Output "Synchronous_Commit Replicas for $($SecondaryAG.AGName) :"
-            Write-Output ""
-            Write-Output "$($AGTopology.SyncCommitSecondaryServers)"
-            Write-Output ""
-            Start-Sleep -Seconds 1
-
+            
+            if ($MaintainHAForAGs) {
+                #More than one sync commit replicas found
+                Write-Output "More than one synchronous_commit secondaries already found for AG: $($SecondaryAG.AGName)"
+                Write-Output ""
+                Write-Output "Synchronous_Commit Replicas for $($SecondaryAG.AGName) :"
+                Write-Output ""
+                Write-Output "$($AGTopology.SyncCommitSecondaryServers)"
+                Write-Output ""
+                Start-Sleep -Seconds 1
+            }
             #Make Async
             Write-Output "Setting $($SecondaryAG.AGName) to Asynchronous_commit mode on $ServerInstance ..."
             Write-Output ""

@@ -17,17 +17,19 @@ Function Set-AGReplicaToSyncCommit {
         [Switch]$ScriptOnly = $true
 
     )
-  
+    
+    #Get @@ServerName from SQL. Fully qualified servernames dont work when modifying replica.
+    $SQLReplicaName = Get-ServerNameFromSQL -ServerInstance $ReplicaServer
 
     $QuerySetSync = @"
     ALTER AVAILABILITY GROUP [$AvailabilityGroup]
-    MODIFY REPLICA ON N'$ReplicaServer' WITH (AVAILABILITY_MODE = SYNCHRONOUS_COMMIT); 
+    MODIFY REPLICA ON N'$SQLReplicaName' WITH (AVAILABILITY_MODE = SYNCHRONOUS_COMMIT); 
 
 "@
 
     $QueryChangeFailoverMode = @"
     ALTER AVAILABILITY GROUP [$AvailabilityGroup]
-    MODIFY REPLICA ON N'$ReplicaServer' WITH (FAILOVER_MODE = AUTOMATIC); 
+    MODIFY REPLICA ON N'$SQLReplicaName' WITH (FAILOVER_MODE = AUTOMATIC); 
 
 "@
 
@@ -41,7 +43,7 @@ Function Set-AGReplicaToSyncCommit {
     }
 
     try {
-        if ($PSCmdlet.ShouldProcess("$ReplicaServer - $AvailabilityGroup")) {
+        if ($PSCmdlet.ShouldProcess("$SQLReplicaName - $AvailabilityGroup")) {
             
             Invoke-Sqlcmd -ServerInstance $PrimaryServer -Database master -Query $QuerySetSync -QueryTimeout 60 -ErrorAction Stop
             Invoke-Sqlcmd -ServerInstance $PrimaryServer -Database master -Query $QueryChangeFailoverMode -QueryTimeout 60 -ErrorAction Stop

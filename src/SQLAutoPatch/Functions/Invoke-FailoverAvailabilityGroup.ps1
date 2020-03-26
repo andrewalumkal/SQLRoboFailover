@@ -10,21 +10,31 @@ Function Invoke-FailoverAvailabilityGroup {
         $AvailabilityGroup,
 
         [Parameter(Mandatory = $false)]
+        [Switch]$RunPostFailoverChecks = $true,
+
+        [Parameter(Mandatory = $false)]
         [Switch]$ScriptOnly = $true
 
     )
 
-    Write-Output "Running health checks for [$AvailabilityGroup] ..."
+    Write-Output "Getting AG information for [$AvailabilityGroup] ..."
     Write-Output ""
 
+    $AGGroupReplicas = @(Get-AllAvailabilityGroupReplicas -ServerInstance $PrimaryServerInstance `
+        | Where-Object { $_.ClusterType -eq "wsfc" -and $_.AGName -eq $AvailabilityGroup })
+
     $PrimaryAG = $null
-    $PrimaryAG = @(Get-AllPrimaryAvailabilityGroupReplicas -ServerInstance $PrimaryServerInstance | Where-Object -Property AGName -eq $AvailabilityGroup)
+    $PrimaryAG = @($AGGroupReplicas | Where-Object -Property ReplicaRole -eq "PRIMARY")
+    
 
     if (!$PrimaryAG) {
         Write-Output "[$AvailabilityGroup] does not exist or is not in primary role on this server"
         Write-Output ""
         return
     }
+
+    Write-Output "Running health checks for [$AvailabilityGroup] ..."
+    Write-Output ""
 
     $AGTopology = Get-AGTopology -PrimaryServerInstance $PrimaryServerInstance -AvailabilityGroup $AvailabilityGroup
     #$AGTopology
@@ -35,10 +45,22 @@ Function Invoke-FailoverAvailabilityGroup {
         return
     }
 
+    #Check AG health
+    $UnHealthyAG = @($AGGroupReplicas | Where-Object { $_.ReplicaHealth -ne "HEALTHY" `
+                -or $_.ReplicaConnectedState -ne "CONNECTED" })
+    
+    if ($UnHealthyAG.Count -gt 0) {
+        Write-Error "Found [$AvailabilityGroup] replicas that are not in a healthy state. Not attempting failover."
+        Write-Output ""
+        return
+    }  
+    
+    
+    #Check AG database level health
     $AGDatabases = @(Get-AGDatabases -ServerInstance $PrimaryServerInstance -AvailabilityGroup $AvailabilityGroup)
     $PrimaryDBs = @($AGDatabases | Where-Object -Property ReplicaRole -eq "PRIMARY")
 
-    #Check if AG databases are healthy
+    
     $UnHealthyAGDatabases = @($AGDatabases | Where-Object { $_.SynchronizationHealth -ne "HEALTHY" `
                 -or $_.ReplicaHealth -ne "HEALTHY" `
                 -or $_.ReplicaConnectedState -ne "CONNECTED" })
@@ -46,7 +68,7 @@ Function Invoke-FailoverAvailabilityGroup {
     if ($UnHealthyAGDatabases.Count -gt 0) {
         Write-Error "[$AvailabilityGroup] databases are not in a healthy state. Not attempting failover."
         Write-Output ""
-        exit
+        return
     }                
 
     #Get first available sync secondary
@@ -68,7 +90,7 @@ Function Invoke-FailoverAvailabilityGroup {
     Write-Output ""
     Start-Sleep -Seconds 2
 
-    if ($ScriptOnly){
+    if ($ScriptOnly) {
         Invoke-FailoverSQLCommand -FailoverTargetServer $FailoverTargetServer -AvailabilityGroup $AvailabilityGroup -Confirm:$false -ScriptOnly:$ScriptOnly
         return
     }
@@ -86,11 +108,15 @@ Function Invoke-FailoverAvailabilityGroup {
 
         Start-Sleep -Seconds 5
 
-        Write-Output "Running post failover checks for AG:[$AvailabilityGroup]"
-        Write-Output ""
+        if ($RunPostFailoverChecks) {
 
-        Invoke-PostFailoverHealthPoll -ServerInstance $FailoverTargetServer -AvailabilityGroup $AvailabilityGroup -MaxPollCount 5 -PollIntervalSeconds 30
+            Write-Output "Running post failover checks for AG:[$AvailabilityGroup]"
+            Write-Output ""
 
+            Invoke-PostFailoverHealthPoll -ServerInstance $FailoverTargetServer -AvailabilityGroup $AvailabilityGroup -MaxPollCount 5 -PollIntervalSeconds 30
+        }
+
+        
 
     }
     

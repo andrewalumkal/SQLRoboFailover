@@ -33,6 +33,12 @@ Function Test-IsRestartReady {
             $IsRestartReady = 0
             return $IsRestartReady
         }
+
+        if ($AGReplicas | Where-Object -Property ReplicaHealth -ne "HEALTHY") {
+            Write-Verbose "Found replicas that are not in a healthy state"
+            $IsRestartReady = 0
+            return $IsRestartReady
+        }
     
         if ($AGReplicas | Where-Object -Property ReplicaConnectedState -ne "CONNECTED") {
             Write-Verbose "Found replicas that are not in a connected state"

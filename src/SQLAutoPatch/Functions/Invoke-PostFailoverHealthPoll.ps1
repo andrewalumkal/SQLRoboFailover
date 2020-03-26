@@ -57,6 +57,7 @@ Function Invoke-PostFailoverHealthPoll {
 
     if ($UnHealthyDatabases.Count -eq 0) {
         Write-Output "Post failover checks are healthy for AG:[$AvailabilityGroup]"
+        Write-Output ""
         return
     }
 
