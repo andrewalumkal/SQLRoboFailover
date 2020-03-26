@@ -8,12 +8,12 @@ The core patching function used in this solution is `Update-DbaInstance` by [dba
 
 ## Invoke-FailoverAvailabilityGroup
 ```powershell
-Invoke-FailoverAvailabilityGroup -PrimaryServerInstance <PrimaryServerName> -AvailabilityGroup <AGName> -ScriptOnly:$false -Confirm:$true
+Invoke-FailoverAvailabilityGroup -PrimaryServerInstance <PrimaryServerName> -AvailabilityGroup <AGName> -RunPostFailoverChecks:$true -ScriptOnly:$false -Confirm:$true
 ```
 Failover AG to an available synchronous_commit replica. 
 - Runs all health checks prior to failover for the specified AG (all databases are healthy, synchronized state) 
 - Performs failover
-- Runs post failover checks to ensure all databases are healthy on all replicas. Polling mechanism built in to keep polling health state if found unhealthy. Health status will be printed to console on every poll
+- If `-RunPostFailoverChecks` is enabled - runs post failover checks to ensure all databases are healthy on all replicas. Polling mechanism built in to keep polling health state if found unhealthy. Health status will be printed to console on every poll
 
 ### Parameters
 ```powershell
@@ -25,6 +25,49 @@ Server / listener to the primary AG replica
 -AvailabilityGroup
 ```
 Availability Group Name
+
+```powershell
+-RunPostFailoverChecks
+```
+Runs post failover checks to ensure all databases are healthy on all replicas. Polling mechanism built in to keep polling health state if found unhealthy. Health status will be printed to console on every poll
+
+```powershell
+-ScriptOnly
+```
+Script out all actions. No actions will actully be performed.
+Default = $true
+
+```powershell
+-Confirm
+```
+Prompt for confirmation prior to taking action.
+Default = $true
+
+## Invoke-FailoverAllPrimaryAGsOnServer
+```powershell
+Invoke-FailoverAllPrimaryAGsOnServer -ServerInstance <ServerName> -AvailabilityGroup <AGName> -RunPostFailoverChecks:$true -ScriptOnly:$false -Confirm:$true
+```
+Failover all primary Availability Groups to an available synchronous_commit replica. 
+- Runs all health checks prior to failover for all AGs (all databases are healthy, synchronized state) 
+- Performs failover one at a time
+- If `-RunPostFailoverChecks` is enabled - runs post failover checks to ensure all databases are healthy on all replicas agter each failover. Polling mechanism built in to keep polling health state if found unhealthy. Health status will be printed to console on every poll
+
+### Parameters
+```powershell
+-ServerInstance
+```
+Server name 
+
+```powershell
+-AvailabilityGroup
+```
+Availability Group Name
+
+```powershell
+-RunPostFailoverChecks
+```
+Runs post failover checks to ensure all databases are healthy on all replicas. Polling mechanism built in to keep polling health state if found unhealthy. Health status will be printed to console on every poll
+
 ```powershell
 -ScriptOnly
 ```
