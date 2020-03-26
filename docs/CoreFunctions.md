@@ -45,7 +45,7 @@ Default = $true
 
 ## Invoke-FailoverAllPrimaryAGsOnServer
 ```powershell
-Invoke-FailoverAllPrimaryAGsOnServer -ServerInstance <ServerName> -AvailabilityGroup <AGName> -RunPostFailoverChecks:$true -ScriptOnly:$false -Confirm:$true
+Invoke-FailoverAllPrimaryAGsOnServer -ServerInstance <ServerName> -ExcludeAGs "AG4,AG5" -AvailabilityGroup <AGName> -RunPostFailoverChecks:$true -ScriptOnly:$false -Confirm:$true
 ```
 Failover all primary Availability Groups to an available synchronous_commit replica. 
 - Runs all health checks prior to failover for all AGs (all databases are healthy, synchronized state) 
@@ -62,6 +62,11 @@ Server name
 -AvailabilityGroup
 ```
 Availability Group Name
+
+```powershell
+-ExcludeAGs "AG4, AG6, AG9"
+```
+Comma seperated list of AGs to exclude
 
 ```powershell
 -RunPostFailoverChecks
@@ -150,7 +155,7 @@ Default = $true
 
 ## Set-AllSecondarySyncReplicasToAsync
 ```powershell
-Set-AllSecondarySyncReplicasToAsync -ServerInstance <ServerInstance> -MaintainHAForAGs:$true -ScriptOnly:$false -Confirm:$true
+Set-AllSecondarySyncReplicasToAsync -ServerInstance <ServerInstance> -ExcludeAGs "AG4, AG5" -MaintainHAForAGs:$true -ScriptOnly:$false -Confirm:$true
 ```
 Sets all healthy *secondary* synchronous_commit availability groups on a specified server to asynchronous commit. Useful for prepping a replica to be ready for patching / restarts.
 - Finds all *secondary* synchronous_commit availability groups on the server
@@ -162,6 +167,11 @@ Sets all healthy *secondary* synchronous_commit availability groups on a specifi
 -ServerInstance
 ```
 Server to set all synchronous_commit availability groups to asynchronous_commit
+
+```powershell
+-ExcludeAGs "AG4, AG6, AG9"
+```
+Comma seperated list of AGs to exclude
 
 ```powershell
 -MaintainHAForAGs
