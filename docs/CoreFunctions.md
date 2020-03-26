@@ -10,7 +10,7 @@ The core patching function used in this solution is `Update-DbaInstance` by [dba
 ```powershell
 Invoke-FailoverAvailabilityGroup -PrimaryServerInstance <PrimaryServerName> -AvailabilityGroup <AGName> -RunPostFailoverChecks:$true -ScriptOnly:$false -Confirm:$true
 ```
-Failover AG to an available synchronous_commit replica. 
+Failover a single AG to an available synchronous_commit replica. 
 - Runs all health checks prior to failover for the specified AG (all databases are healthy, synchronized state) 
 - Performs failover
 - If `-RunPostFailoverChecks` is enabled - runs post failover checks to ensure all databases are healthy on all replicas. Polling mechanism built in to keep polling health state if found unhealthy. Health status will be printed to console on every poll
