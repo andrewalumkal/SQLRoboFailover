@@ -48,15 +48,13 @@ if ($IsRestartReady){
 ```
 
 #### Check server health after patching
-`Test-IsRestartReady` can be re-run post-patching / restart as it runs all health checks against databases / AGs.
-
 ```powershell
-[bool]$IsServerHealthy = Test-IsRestartReady -ServerInstance <ServerInstance> -Verbose
+[bool]$IsSQLServerHealthy = Test-IsSQLServerHealthy -ServerInstance <ServerInstance> -RunExtendedAGChecks -Verbose
 ```
 
 #### Set all asynchronous_commit Availability Groups back to synchronous_commit
 ```powershell
-if ($IsServerHealthy){
+if ($IsSQLServerHealthy){
   Set-AllSecondaryAsyncReplicasToSync -ServerInstance <ServerInstance> -ForceSingleSyncCopy -ScriptOnly:$false -Confirm
 }
 ```
