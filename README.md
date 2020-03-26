@@ -13,7 +13,7 @@ This solution is built to be flexible. Functions can be pieced together to build
 
 ## Example Usage
 
-### Prepping a server for patching
+### Patching a SQL Server Instance
 
 #### Import modules
 
