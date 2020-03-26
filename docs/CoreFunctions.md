@@ -45,7 +45,7 @@ Default = $true
 
 ## Invoke-FailoverAllPrimaryAGsOnServer
 ```powershell
-Invoke-FailoverAllPrimaryAGsOnServer -ServerInstance <ServerName> -ExcludeAGs "AG4,AG5" -AvailabilityGroup <AGName> -RunPostFailoverChecks:$true -ScriptOnly:$false -Confirm:$true
+Invoke-FailoverAllPrimaryAGsOnServer -ServerInstance <ServerName> -ExcludeAGs "AG4,AG5" -RunPostFailoverChecks:$true -ScriptOnly:$false -Confirm:$true
 ```
 Failover all primary Availability Groups to an available synchronous_commit replica. Excludes any AGs specified in `-ExcludeAGs`
 - Runs all health checks prior to failover for all AGs (all databases are healthy, synchronized state) 
@@ -57,11 +57,6 @@ Failover all primary Availability Groups to an available synchronous_commit repl
 -ServerInstance
 ```
 Server name 
-
-```powershell
--AvailabilityGroup
-```
-Availability Group Name
 
 ```powershell
 -ExcludeAGs "AG4, AG6, AG9"
