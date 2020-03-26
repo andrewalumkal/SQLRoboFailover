@@ -15,31 +15,50 @@ This solution is built to be flexible. Functions can be pieced together to build
 
 ### Prepping a server for patching
 
-#### Import the module
+#### Import modules
 
 ```powershell
+Import-Module SqlServer -Force
 Import-Module .\src\SQLRoboFailover -Force
+Import-Module dbatools -Force
 ```
 
 #### Failover all Primary AGs to an available sync commit replica
+Comprehensive health checks will be completed for each AG prior to failover.
+
 ```powershell
 Invoke-FailoverAllPrimaryAGsOnServer -ServerInstance <ServerName> -RunPostFailoverChecks -ScriptOnly:$false -Confirm
 ```
----------------------------------
-### Set all synchronous_commit Availability Groups to asynchronous_commit
-```powershell
-Set-AllSecondarySyncReplicasToAsync -ServerInstance <ServerInstance> -MaintainHAForAGs -ScriptOnly:$false -Confirm
-```
-
 
 ### Set all synchronous_commit Availability Groups to asynchronous_commit
 ```powershell
 Set-AllSecondarySyncReplicasToAsync -ServerInstance <ServerInstance> -MaintainHAForAGs -ScriptOnly:$false -Confirm
 ```
 
-### Set all synchronous_commit Availability Groups to asynchronous_commit
+### Test if server is ready to be patched or restarted
 ```powershell
-Set-AllSecondarySyncReplicasToAsync -ServerInstance <ServerInstance> -MaintainHAForAGs -ScriptOnly:$false -Confirm
+[bool]$IsRestartReady = Test-IsRestartReady -ServerInstance <ServerInstance> -Verbose
+```
+
+### Patch server using dbatools module
+```powershell
+if ($IsRestartReady){
+  Update-DbaInstance -ComputerName <ServerInsance> -Version <PatchVersion> -Path \\network\share
+}
+```
+
+### Check server health after patching
+`Test-IsRestartReady` can be re-run post-patching / restart as it runs all health checks against databases / AGs.
+
+```powershell
+[bool]$IsServerHealthy = Test-IsRestartReady -ServerInstance <ServerInstance> -Verbose
+```
+
+### Set all asynchronous_commit Availability Groups back to synchronous_commit
+```powershell
+if ($IsServerHealthy){
+  Set-AllSecondaryAsyncReplicasToSync -ServerInstance <ServerInstance> -ForceSingleSyncCopy -ScriptOnly:$false -Confirm
+}
 ```
 
 
