@@ -6,6 +6,7 @@ Function Test-IsRestartReady {
         $ServerInstance
     )
 
+    Write-Verbose "Testing IsRestartReady..."
 
     [bool]$IsRestartReady = 1
 

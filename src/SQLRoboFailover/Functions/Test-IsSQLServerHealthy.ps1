@@ -9,6 +9,7 @@ Function Test-IsSQLServerHealthy {
         [Switch]$RunExtendedAGChecks
     )
 
+    Write-Verbose "Testing IsSQLServerHealthy..."
 
     [bool]$IsSQLServerHealthy = 1
 
