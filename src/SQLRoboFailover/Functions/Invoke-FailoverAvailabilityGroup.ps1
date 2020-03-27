@@ -113,7 +113,7 @@ Function Invoke-FailoverAvailabilityGroup {
             Write-Output "Running post failover checks for AG:[$AvailabilityGroup]"
             Write-Output ""
 
-            Invoke-PostFailoverHealthPoll -ServerInstance $FailoverTargetServer -AvailabilityGroup $AvailabilityGroup -MaxPollCount 5 -PollIntervalSeconds 30
+            Invoke-PostFailoverHealthPoll -ServerInstance $FailoverTargetServer -AvailabilityGroup $AvailabilityGroup -MaxPollCount 10 -PollIntervalSeconds 15
         }
 
         

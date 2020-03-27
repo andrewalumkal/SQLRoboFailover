@@ -44,7 +44,8 @@ Function Invoke-PostFailoverHealthPoll {
             exit         
         }
 
-        Write-Output "Waiting $PollIntervalSeconds seconds before polling health again. Max PollCount = $MaxPollCount"
+        $RemainingPolls = $MaxPollCount - ($PollCount-1)
+        Write-Output "Waiting $PollIntervalSeconds seconds before polling health again. Max Polls = $MaxPollCount , Remaining Polls = $RemainingPolls"
         Write-Output ""
         Start-Sleep -Seconds $PollIntervalSeconds
 
