@@ -47,7 +47,32 @@ Function Test-IsSQLServerHealthy {
             $IsSQLServerHealthy = 0
             return $IsSQLServerHealthy
         }
+
+        #Check SQL Agent Service
+        $SQLAgentService = @(Get-SQLAgentService -ServerInstance $ServerInstance)
         
+        if ($SQLAgentService | Where-Object -Property Status -ne "Running") {
+            Write-Verbose "SQL Agent is not running"
+            $IsSQLServerHealthy = 0
+            return $IsSQLServerHealthy
+        }
+
+        #Check SSRS / SSAS / PowerBI services
+        $SQLReportServices = @(Get-SQLReportingServices -ServerInstance $ServerInstance)
+
+        if ($SQLReportServices | Where-Object -Property Status -ne "Running") {
+            Write-Verbose "Other SQL Reporting Services are not running"
+            Write-Verbose "----UnHealthy Services Found----"
+
+            foreach ($service in $SQLReportServices){
+                Write-Verbose $service.Name
+            }
+
+            Write-Verbose "--------------------------------"
+
+            $IsSQLServerHealthy = 0
+            return $IsSQLServerHealthy
+        }
 
     }
     
