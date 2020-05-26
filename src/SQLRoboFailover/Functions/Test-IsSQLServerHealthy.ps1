@@ -6,6 +6,9 @@ Function Test-IsSQLServerHealthy {
         $ServerInstance,
 
         [Parameter(Mandatory = $false)]
+        [Switch]$CheckBIServices,
+
+        [Parameter(Mandatory = $false)]
         [Switch]$RunExtendedAGChecks
     )
 
@@ -17,6 +20,15 @@ Function Test-IsSQLServerHealthy {
 
     if ($UnHealthyDBs.Count -gt 0) {
         Write-Verbose "Found unhealthy databases on the server"
+        $IsSQLServerHealthy = 0
+        return $IsSQLServerHealthy
+    }
+
+    #Check SQL Agent Service
+    $SQLAgentService = @(Get-SQLAgentService -ServerInstance $ServerInstance)
+        
+    if ($SQLAgentService | Where-Object -Property Status -ne "Running") {
+        Write-Verbose "SQL Agent is not running"
         $IsSQLServerHealthy = 0
         return $IsSQLServerHealthy
     }
@@ -42,29 +54,24 @@ Function Test-IsSQLServerHealthy {
         [bool]$TestAGDBState = 0
         $TestAGDBState = Test-AllAGDatabasesOnServerHealthy -ServerInstance $ServerInstance -RunExtendedChecks:$RunExtendedAGChecks
 
-        if(!$TestAGDBState){
+        if (!$TestAGDBState) {
             Write-Verbose "Found AG databases that are not in a healthy state"
             $IsSQLServerHealthy = 0
             return $IsSQLServerHealthy
         }
 
-        #Check SQL Agent Service
-        $SQLAgentService = @(Get-SQLAgentService -ServerInstance $ServerInstance)
-        
-        if ($SQLAgentService | Where-Object -Property Status -ne "Running") {
-            Write-Verbose "SQL Agent is not running"
-            $IsSQLServerHealthy = 0
-            return $IsSQLServerHealthy
-        }
+    }
 
-        #Check SSRS / SSAS / PowerBI services
+
+    #Check SSRS / SSAS / PowerBI services
+    if ($CheckBIServices) {
         $SQLReportServices = @(Get-SQLReportingServices -ServerInstance $ServerInstance)
 
         if ($SQLReportServices | Where-Object -Property Status -ne "Running") {
             Write-Verbose "Other SQL Reporting Services are not running"
             Write-Verbose "----UnHealthy Services Found----"
 
-            foreach ($service in $SQLReportServices){
+            foreach ($service in $SQLReportServices) {
                 Write-Verbose $service.Name
             }
 
@@ -73,8 +80,9 @@ Function Test-IsSQLServerHealthy {
             $IsSQLServerHealthy = 0
             return $IsSQLServerHealthy
         }
-
     }
+    
+
     
     return $IsSQLServerHealthy
     
