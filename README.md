@@ -48,7 +48,7 @@ Use dbatools module to patch SQL Server
 
 if ($IsSQLServerHealthy -and $IsRestartReady) {
     $Credential = Get-Credential
-    Update-DbaInstance -ComputerName $ServerInstance -Version 2017CU20 -Path "\\fileshare.prod\dfs\FileShare\Database\PatchAutomation\UpgradeMedia\SQL2017" -Credential $Credential -Confirm
+    Update-DbaInstance -ComputerName <ServerInstance> -Version 2017CU20 -Path "\\fileshare.prod\FileShare\Database\UpgradeMedia\SQL2017" -Credential $Credential -Confirm
 }
 
 else {
