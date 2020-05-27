@@ -68,13 +68,6 @@ if ($IsSQLServerHealthy){
 }
 ```
 
-#### Set all secondary asynchronous_commit AGs back to synchronous_commit
-```powershell
-if ($IsSQLServerHealthy){
-  Set-AllSecondaryAsyncReplicasToSync -ServerInstance <ServerInstance> -ForceSingleSyncCopy -ScriptOnly:$false -Confirm
-}
-```
-
 ### Failover Specific AG
 
 Fail over database to an available sync commit replica
