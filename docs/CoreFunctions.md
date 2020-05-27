@@ -8,6 +8,43 @@ The core patching function used in this solution is `Update-DbaInstance` by [dba
 
 # Failover Functions
 
+## Invoke-MakeSQLServerRestartReady
+```powershell
+Invoke-MakeSQLServerRestartReady -ServerInstance <ServerName> -RunPostFailoverChecks:$true -ScriptOnly:$false -Confirm:$true
+```
+All-in-one function to failover all primary AGs to an available sync-commit replica and then set all local replicas to async commit after failover.
+
+- Runs all health checks prior to failover for the specified AG (all databases are healthy, synchronized state) 
+- Fails over all primary AG's on the server to an available sync-commit replica
+- If `-RunPostFailoverChecks` is enabled - runs post failover checks to ensure all databases are healthy on all replicas. Polling mechanism built in to keep polling health state if found unhealthy. Health status will be printed to console on every poll
+- Set all sync-commit AGs on the server to async-commit
+- Run health checks to ensure SQL is ready for restarts 
+
+### Parameters
+```powershell
+-ServerInstance
+```
+Servername to prep for restart / patching
+
+```powershell
+-RunPostFailoverChecks
+```
+Runs post failover checks to ensure all databases are healthy on all replicas. Polling mechanism built in to keep polling health state if found unhealthy. Health status will be printed to console on every poll
+
+```powershell
+-ScriptOnly
+```
+Script out all actions. No actions will actully be performed.
+Default = $true
+
+```powershell
+-Confirm
+```
+Prompt for confirmation prior to taking action.
+Default = $true
+
+--------------------------------------------------------------------------------------------------------------
+
 ## Invoke-FailoverAvailabilityGroup
 ```powershell
 Invoke-FailoverAvailabilityGroup -PrimaryServerInstance <PrimaryServerName> -AvailabilityGroup <AGName> -RunPostFailoverChecks:$true -ScriptOnly:$false -Confirm:$true
