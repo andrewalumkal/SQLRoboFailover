@@ -24,6 +24,7 @@ Import-Module dbatools -Force
 ```
 
 #### Prepare primary node ready for restarts
+
 All-in-one function to failover all primary AGs to a sync-commit replica and set all local replicas to async commit.
 
 - Checks general sql health
@@ -38,6 +39,9 @@ Invoke-MakeSQLServerRestartReady -ServerInstance <ServerInstance> -RunPostFailov
 
 
 #### Patch server using dbatools module
+
+Use dbatools module to patch SQL Server
+
 ```powershell
 [bool]$IsSQLServerHealthy = Test-IsSQLServerHealthy -ServerInstance <ServerInstance> -Verbose
 [bool]$IsRestartReady = Test-IsRestartReady -ServerInstance <ServerInstance> -Verbose
@@ -64,58 +68,19 @@ if ($IsSQLServerHealthy){
 }
 ```
 
-
-
-
-
-
-
-
-
-### Patching a SQL Server Instance
-
-#### Import modules
-
-```powershell
-Import-Module SqlServer -Force
-Import-Module .\src\SQLRoboFailover -Force
-Import-Module dbatools -Force
-```
-
-#### Failover all Primary AGs to an available sync commit replica
-Comprehensive health checks will be completed for each AG pre and post failover with a built in health polling mechanism.
-
-```powershell
-Invoke-FailoverAllPrimaryAGsOnServer -ServerInstance <ServerName> -RunPostFailoverChecks -ScriptOnly:$false -Confirm
-```
-
-#### Set all secondary synchronous_commit AGs to asynchronous_commit
-```powershell
-Set-AllSecondarySyncReplicasToAsync -ServerInstance <ServerInstance> -MaintainHAForAGs -ScriptOnly:$false -Confirm
-```
-
-#### Test if server is ready to be patched or restarted
-```powershell
-[bool]$IsRestartReady = Test-IsRestartReady -ServerInstance <ServerInstance> -Verbose
-```
-
-#### Patch server using dbatools module
-```powershell
-if ($IsRestartReady){
-  Update-DbaInstance -ComputerName <ServerInsance> -Version <PatchVersion> -Path \\network\share
-}
-```
-
-#### Check server health after patching
-```powershell
-[bool]$IsSQLServerHealthy = Test-IsSQLServerHealthy -ServerInstance <ServerInstance> -RunExtendedAGChecks -Verbose
-```
-
 #### Set all secondary asynchronous_commit AGs back to synchronous_commit
 ```powershell
 if ($IsSQLServerHealthy){
   Set-AllSecondaryAsyncReplicasToSync -ServerInstance <ServerInstance> -ForceSingleSyncCopy -ScriptOnly:$false -Confirm
 }
+```
+
+### Failover Specific AG
+
+Fail over database to an available sync commit replica
+
+```powershell
+Invoke-FailoverAvailabilityGroup -PrimaryServerInstance <PrimaryServer> -AvailabilityGroup "AG10" -RunPostFailoverChecks -Confirm:$true -ScriptOnly:$false
 ```
 
 
