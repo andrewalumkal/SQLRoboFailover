@@ -85,6 +85,7 @@ Function Test-IsSQLServerHealthy {
 
     if ($IsSQLServerHealthy){
         Write-Verbose "SQL Server is healthy"
+        Write-Verbose "---------------------"
     }
     return $IsSQLServerHealthy
     

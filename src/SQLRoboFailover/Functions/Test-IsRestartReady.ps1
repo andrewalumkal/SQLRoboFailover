@@ -7,13 +7,14 @@ Function Test-IsRestartReady {
     )
 
     Write-Verbose "Testing IsRestartReady..."
+    Write-Verbose "-------------------------"
 
     [bool]$IsRestartReady = 1
 
     $UnHealthyDBs = @(Get-UnHealthySQLDatabases -ServerInstance $ServerInstance)
 
     if ($UnHealthyDBs.Count -gt 0) {
-        Write-Verbose "Found unhealthy databases on the server"
+        Write-Warning "Found unhealthy databases on the server"
         $IsRestartReady = 0
         return $IsRestartReady
     }
@@ -24,25 +25,25 @@ Function Test-IsRestartReady {
     if ($AGReplicas.Count -gt 0) {
 
         if ($AGReplicas | Where-Object -Property ReplicaRole -ne "SECONDARY") {
-            Write-Verbose "Found replicas that are not in secondary role"
+            Write-Warning "Found replicas that are not in secondary role"
             $IsRestartReady = 0
             return $IsRestartReady
         }
     
         if ($AGReplicas | Where-Object -Property AvailabilityMode -ne "ASYNCHRONOUS_COMMIT") {
-            Write-Verbose "Found replicas that are not in asynchronous_commit mode"
+            Write-Warning "Found replicas that are not in asynchronous_commit mode"
             $IsRestartReady = 0
             return $IsRestartReady
         }
 
         if ($AGReplicas | Where-Object -Property ReplicaHealth -ne "HEALTHY") {
-            Write-Verbose "Found replicas that are not in a healthy state"
+            Write-Warning "Found replicas that are not in a healthy state"
             $IsRestartReady = 0
             return $IsRestartReady
         }
     
         if ($AGReplicas | Where-Object -Property ReplicaConnectedState -ne "CONNECTED") {
-            Write-Verbose "Found replicas that are not in a connected state"
+            Write-Warning "Found replicas that are not in a connected state"
             $IsRestartReady = 0
             return $IsRestartReady
         }
@@ -52,7 +53,7 @@ Function Test-IsRestartReady {
         $TestAGDBState = Test-AllAGDatabasesOnServerHealthy -ServerInstance $ServerInstance
 
         if(!$TestAGDBState){
-            Write-Verbose "Found AG databases that are not in a healthy state"
+            Write-Warning "Found AG databases that are not in a healthy state"
             $IsRestartReady = 0
             return $IsRestartReady
         }
@@ -60,6 +61,10 @@ Function Test-IsRestartReady {
 
     }
     
+    if ($IsRestartReady){
+        Write-Verbose "SQL Server is ready to restart"
+        Write-Verbose "------------------------------"
+    }
     return $IsRestartReady
     
 }
