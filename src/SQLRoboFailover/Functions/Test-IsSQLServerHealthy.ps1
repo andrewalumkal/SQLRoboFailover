@@ -13,13 +13,14 @@ Function Test-IsSQLServerHealthy {
     )
 
     Write-Verbose "Testing IsSQLServerHealthy..."
+    Write-Verbose ""
 
     [bool]$IsSQLServerHealthy = 1
 
     $UnHealthyDBs = @(Get-UnHealthySQLDatabases -ServerInstance $ServerInstance)
 
     if ($UnHealthyDBs.Count -gt 0) {
-        Write-Verbose "Found unhealthy databases on the server"
+        Write-Warning "Found unhealthy databases on the server"
         $IsSQLServerHealthy = 0
         return $IsSQLServerHealthy
     }
@@ -28,7 +29,7 @@ Function Test-IsSQLServerHealthy {
     $SQLAgentService = @(Get-SQLAgentService -ServerInstance $ServerInstance)
         
     if ($SQLAgentService | Where-Object -Property Status -ne "Running") {
-        Write-Verbose "SQL Agent is not running"
+        Write-Warning "SQL Agent is not running"
         $IsSQLServerHealthy = 0
         return $IsSQLServerHealthy
     }
@@ -39,13 +40,13 @@ Function Test-IsSQLServerHealthy {
     if ($AGReplicas.Count -gt 0) {
 
         if ($AGReplicas | Where-Object -Property ReplicaHealth -ne "HEALTHY") {
-            Write-Verbose "Found replicas that are not in a healthy state"
+            Write-Warning "Found replicas that are not in a healthy state"
             $IsSQLServerHealthy = 0
             return $IsSQLServerHealthy
         }
     
         if ($AGReplicas | Where-Object -Property ReplicaConnectedState -ne "CONNECTED") {
-            Write-Verbose "Found replicas that are not in a connected state"
+            Write-Warning "Found replicas that are not in a connected state"
             $IsSQLServerHealthy = 0
             return $IsSQLServerHealthy
         }
@@ -55,7 +56,7 @@ Function Test-IsSQLServerHealthy {
         $TestAGDBState = Test-AllAGDatabasesOnServerHealthy -ServerInstance $ServerInstance -RunExtendedChecks:$RunExtendedAGChecks
 
         if (!$TestAGDBState) {
-            Write-Verbose "Found AG databases that are not in a healthy state"
+            Write-Warning "Found AG databases that are not in a healthy state"
             $IsSQLServerHealthy = 0
             return $IsSQLServerHealthy
         }
@@ -68,14 +69,14 @@ Function Test-IsSQLServerHealthy {
         $SQLReportServices = @(Get-SQLReportingServices -ServerInstance $ServerInstance)
 
         if ($SQLReportServices | Where-Object -Property Status -ne "Running") {
-            Write-Verbose "Other SQL Reporting Services are not running"
-            Write-Verbose "----UnHealthy Services Found----"
+            Write-Warning "Other SQL Reporting Services are not running"
+            Write-Warning "----UnHealthy Services Found----"
 
             foreach ($service in $SQLReportServices) {
-                Write-Verbose $service.Name
+                Write-Warning $service.Name
             }
 
-            Write-Verbose "--------------------------------"
+            Write-Warning "--------------------------------"
 
             $IsSQLServerHealthy = 0
             return $IsSQLServerHealthy
@@ -83,7 +84,9 @@ Function Test-IsSQLServerHealthy {
     }
     
 
-    
+    if ($IsSQLServerHealthy){
+        Write-Verbose "SQL Server is healthy"
+    }
     return $IsSQLServerHealthy
     
 }
