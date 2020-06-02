@@ -69,8 +69,7 @@ Function Test-IsSQLServerHealthy {
         $SQLReportServices = @(Get-SQLReportingServices -ServerInstance $ServerInstance)
 
         if ($SQLReportServices | Where-Object -Property Status -ne "Running") {
-            Write-Warning "Other SQL Reporting Services are not running"
-            Write-Warning "----UnHealthy Services Found----"
+            Write-Warning "----Unhealthy BI Services Found----"
 
             foreach ($service in $SQLReportServices) {
                 Write-Warning $service.Name
