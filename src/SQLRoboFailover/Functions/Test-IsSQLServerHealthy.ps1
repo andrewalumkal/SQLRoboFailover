@@ -13,7 +13,7 @@ Function Test-IsSQLServerHealthy {
     )
 
     Write-Verbose "Testing IsSQLServerHealthy..."
-    Write-Verbose ""
+    Write-Verbose "-----------------------------"
 
     [bool]$IsSQLServerHealthy = 1
 
