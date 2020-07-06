@@ -10,6 +10,12 @@ Function Invoke-FailoverAllPrimaryAGsOnServer {
         $ExcludeAGs,
 
         [Parameter(Mandatory = $false)]
+        [Switch]$CheckRunningBackups = $false,
+
+        [Parameter(Mandatory = $false)]
+        [Switch]$CheckRunningCheckDBs = $false,
+
+        [Parameter(Mandatory = $false)]
         [Switch]$RunPostFailoverChecks = $true,
 
         [Parameter(Mandatory = $false)]
@@ -45,7 +51,8 @@ Function Invoke-FailoverAllPrimaryAGsOnServer {
     foreach ($PrimaryAG in $PrimaryAGs) {
 
         Invoke-FailoverAvailabilityGroup -PrimaryServerInstance $ServerInstance -AvailabilityGroup $PrimaryAG.AGName `
-            -RunPostFailoverChecks:$RunPostFailoverChecks -ScriptOnly:$ScriptOnly -Confirm:$Confirm
+            -RunPostFailoverChecks:$RunPostFailoverChecks -CheckRunningBackups:$CheckRunningBackups `
+            -CheckRunningCheckDBs:$CheckRunningCheckDBs -ScriptOnly:$ScriptOnly -Confirm:$Confirm
 
     }
 
