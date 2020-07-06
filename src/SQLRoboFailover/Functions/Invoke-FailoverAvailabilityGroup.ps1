@@ -10,6 +10,12 @@ Function Invoke-FailoverAvailabilityGroup {
         $AvailabilityGroup,
 
         [Parameter(Mandatory = $false)]
+        [Switch]$CheckRunningBackups = $false,
+
+        [Parameter(Mandatory = $false)]
+        [Switch]$CheckRunningCheckDBs = $false,
+
+        [Parameter(Mandatory = $false)]
         [Switch]$RunPostFailoverChecks = $true,
 
         [Parameter(Mandatory = $false)]
@@ -81,10 +87,82 @@ Function Invoke-FailoverAvailabilityGroup {
 
 
     if ($TargetDBs.Count -ne $PrimaryDBs.Count) {
-        Write-Output "Databases for failover partner [$FailoverTargetServer] are not synchronized. Skipping failover attempt."
+        Write-Error "Databases for failover partner [$FailoverTargetServer] are not synchronized. Skipping failover attempt."
         Write-Output ""
         return
     }
+
+    #Check there's no redo queue greater than 10 MB
+    $DBsWithRedoQueue = @($AGDatabases | Where-Object { $_.ReplicaServerName -eq $FailoverTargetServer `
+                -and $_.RedoQueueSizeMB -gt 10 })
+
+    if ($DBsWithRedoQueue.Count -gt 0) {
+        Write-Error "Databases found with redo queue greater than 10 MB on [$FailoverTargetServer]. Skipping failover attempt."
+        Write-Output ""
+        return
+    }                               
+
+    #Check for in flight full backups running on primary and failover target
+    if ($CheckRunningBackups) {
+
+        #Check Primary
+        $AllRunningBackupsOnPrimary = Get-RunningBackups -ServerInstance $PrimaryServerInstance 
+        $FoundRunningBackupsPrimary = @($AllRunningBackupsOnPrimary | Where-Object { $PrimaryDBs.DatabaseName -contains $_.Database })
+        
+        if ($FoundRunningBackupsPrimary.Count -gt 0) {
+            Write-Error "In-Flight backups found running on primary:[$PrimaryServerInstance]. Skipping failover attempt."
+            Write-Output ""
+            Write-Output "--------------------------------------------------------"
+            Write-Output $FoundRunningBackupsPrimary | Format-Table
+            return
+        }
+
+        #Check failover target
+        $AllRunningBackupsOnTarget = Get-RunningBackups -ServerInstance $FailoverTargetServer 
+        $FoundRunningBackupsTarget = @($AllRunningBackupsOnTarget | Where-Object { $PrimaryDBs.DatabaseName -contains $_.Database })
+        
+        if ($FoundRunningBackupsTarget.Count -gt 0) {
+            Write-Error "In-Flight backups found running on failover target:[$FailoverTargetServer]. Skipping failover attempt."
+            Write-Output ""
+            Write-Output "--------------------------------------------------------"
+            Write-Output $FoundRunningBackupsTarget | Format-Table
+            return
+        }
+        
+    }
+
+
+    #Check for in flight CheckDBs running on primary and failover target
+    if ($CheckRunningCheckDBs) {
+
+        #Check Primary
+        $AllRunningCheckDBsOnPrimary = Get-RunningCheckDBs -ServerInstance $PrimaryServerInstance 
+        $FoundRunningCheckDBsPrimary = @($AllRunningCheckDBsOnPrimary | Where-Object { $PrimaryDBs.DatabaseName -contains $_.Database })
+        
+        if ($FoundRunningCheckDBsPrimary.Count -gt 0) {
+            Write-Error "In-Flight CheckDB found running on primary:[$PrimaryServerInstance]. Skipping failover attempt."
+            Write-Output ""
+            Write-Output "--------------------------------------------------------"
+            Write-Output $FoundRunningCheckDBsPrimary | Format-Table
+            return
+        }
+
+        #Check failover target
+        $AllRunningCheckDBsOnTarget = Get-RunningCheckDBs -ServerInstance $FailoverTargetServer 
+        $FoundRunningCheckDBsTarget = @($AllRunningCheckDBsOnTarget | Where-Object { $PrimaryDBs.DatabaseName -contains $_.Database })
+        
+        if ($FoundRunningCheckDBsTarget.Count -gt 0) {
+            Write-Error "In-Flight CheckDB found running on failover target:[$FailoverTargetServer]. Skipping failover attempt."
+            Write-Output ""
+            Write-Output "--------------------------------------------------------"
+            Write-Output $FoundRunningCheckDBsTarget | Format-Table
+            return
+        }
+        
+    }
+
+    #Checks complete#
+    ##########################################################################################################################
 
     Write-Output "All checks are clean"
     Write-Output ""
@@ -113,7 +191,7 @@ Function Invoke-FailoverAvailabilityGroup {
             Write-Output "Running post failover checks for AG:[$AvailabilityGroup]"
             Write-Output ""
 
-            Invoke-PostFailoverHealthPoll -ServerInstance $FailoverTargetServer -AvailabilityGroup $AvailabilityGroup -MaxPollCount 10 -PollIntervalSeconds 15
+            Invoke-PostFailoverHealthPoll -ServerInstance $FailoverTargetServer -AvailabilityGroup $AvailabilityGroup -MaxPollCount 20 -PollIntervalSeconds 15
         }
 
         

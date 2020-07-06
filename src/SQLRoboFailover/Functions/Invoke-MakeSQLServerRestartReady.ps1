@@ -9,6 +9,12 @@ Function Invoke-MakeSQLServerRestartReady {
         [Switch]$RunPostFailoverChecks = $true,
 
         [Parameter(Mandatory = $false)]
+        [Switch]$CheckRunningBackups = $false,
+
+        [Parameter(Mandatory = $false)]
+        [Switch]$CheckRunningCheckDBs = $false,
+
+        [Parameter(Mandatory = $false)]
         [Switch]$ScriptOnly = $true,
 
         [Parameter(Mandatory = $false)]
@@ -21,7 +27,8 @@ Function Invoke-MakeSQLServerRestartReady {
 
     if ($IsSQLServerHealthy) {
         Write-Output "Starting failover for all primary AGs on [$ServerInstance] ..."
-        Invoke-FailoverAllPrimaryAGsOnServer -ServerInstance $ServerInstance -RunPostFailoverChecks:$RunPostFailoverChecks -ScriptOnly:$ScriptOnly -Confirm:$Confirm
+        Invoke-FailoverAllPrimaryAGsOnServer -ServerInstance $ServerInstance -RunPostFailoverChecks:$RunPostFailoverChecks `
+                -CheckRunningBackups:$CheckRunningBackups -CheckRunningCheckDBs:$CheckRunningCheckDBs -ScriptOnly:$ScriptOnly -Confirm:$Confirm
     }
     
     else {

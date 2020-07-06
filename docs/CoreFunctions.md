@@ -32,6 +32,18 @@ Servername to prep for restart / patching
 Runs post failover checks to ensure all databases are healthy on all replicas. Polling mechanism built in to keep polling health state if found unhealthy. Health status will be printed to console on every poll
 
 ```powershell
+-CheckRunningBackups
+```
+As part of failing over an AG, checks if in-flight full backups are running for any database on the AG. The check will run on both primary and failover target instances. If found, an error will be raised and failover will be skipped for that AG.
+Default = $false
+
+```powershell
+-CheckRunningCheckDBs
+```
+As part of failing over an AG, checks if in-flight CheckDBs are running for any database on the AG. The check will run on both primary and failover target instances. If found, an error will be raised and failover will be skipped for that AG.
+Default = $false
+
+```powershell
 -ScriptOnly
 ```
 Script out all actions. No actions will actully be performed.
@@ -71,6 +83,18 @@ Availability Group Name
 Runs post failover checks to ensure all databases are healthy on all replicas. Polling mechanism built in to keep polling health state if found unhealthy. Health status will be printed to console on every poll
 
 ```powershell
+-CheckRunningBackups
+```
+Checks if in-flight full backups are running for any database on the AG. The check will run on both primary and failover target instances. If found, an error will be raised and failover will be skipped.
+Default = $false
+
+```powershell
+-CheckRunningCheckDBs
+```
+Checks if in-flight CheckDBs are running for any database on the AG. The check will run on both primary and failover target instances. If found, an error will be raised and failover will be skipped.
+Default = $false
+
+```powershell
 -ScriptOnly
 ```
 Script out all actions. No actions will actully be performed.
@@ -108,6 +132,18 @@ Comma seperated list of AGs to exclude
 -RunPostFailoverChecks
 ```
 Runs post failover checks to ensure all databases are healthy on all replicas. Polling mechanism built in to keep polling health state if found unhealthy. Health status will be printed to console on every poll
+
+```powershell
+-CheckRunningBackups
+```
+Checks if in-flight full backups are running for any database on the AG. The check will run on both primary and failover target instances. If found, an error will be raised and failover will be skipped for that AG.
+Default = $false
+
+```powershell
+-CheckRunningCheckDBs
+```
+Checks if in-flight CheckDBs are running for any database on the AG. The check will run on both primary and failover target instances. If found, an error will be raised and failover will be skipped for that AG.
+Default = $false
 
 ```powershell
 -ScriptOnly
