@@ -21,7 +21,7 @@ Function Invoke-PostFailoverHealthPoll {
     )
 
 
-    Write-Output "Querying Server:[$ServerInstance] for AG health information..."
+    Write-Output "Running AG health check poll for AG:[$AvailabilityGroup] on Server:[$ServerInstance]"
     Write-Output ""
     
     $PollCount = 1
@@ -57,7 +57,8 @@ Function Invoke-PostFailoverHealthPoll {
     }                    
 
     if ($UnHealthyDatabases.Count -eq 0) {
-        Write-Output "Post failover checks are healthy for AG:[$AvailabilityGroup]"
+        Write-Output "Checks are healthy for AG:[$AvailabilityGroup] on [$ServerInstance]"
+        Write-Output "----------------------------------------------------------------------------------"
         Write-Output ""
         return
     }
