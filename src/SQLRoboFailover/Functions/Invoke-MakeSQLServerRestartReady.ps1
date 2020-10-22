@@ -35,9 +35,12 @@ Function Invoke-MakeSQLServerRestartReady {
         Write-Output "SQL Server is NOT healthy"
         return
     }
+    
 
-    #Run post failover health checks for all AGs
-    Invoke-AGHealthPoll -ServerInstance $ServerInstance -MaxPollCount 25 -PollIntervalSeconds 15
+    if ($RunPostFailoverChecks) {
+        #Run post failover health checks for all AGs
+        Invoke-AGHealthPoll -ServerInstance $ServerInstance -MaxPollCount 25 -PollIntervalSeconds 15
+    }
     
     Set-AllSecondarySyncReplicasToAsync -ServerInstance $ServerInstance -MaintainHAForAGs -ScriptOnly:$ScriptOnly -Confirm:$Confirm
     
