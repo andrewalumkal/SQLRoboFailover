@@ -23,6 +23,8 @@ Function Invoke-FailoverAvailabilityGroup {
 
     )
 
+    Write-Output ""
+    Write-Output "----------------------------------------------------------"
     Write-Output "Getting AG information for [$AvailabilityGroup] ..."
     Write-Output ""
 
