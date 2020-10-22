@@ -40,7 +40,7 @@ Function Invoke-AGHealthPoll {
     Write-Output "###########################################################################"
     Write-Output ""
 
-    $SecondaryAGs = @($AllAGsOnServer | Where-Object -Property ReplicaRole -eq "SECONDARY")
+    $SecondaryAGs = @($AllAGsOnServer | Where-Object -Property ReplicaRole -ne "PRIMARY") #Catch all replica states other than primary
 
     foreach ($AG in $SecondaryAGs) {
         
