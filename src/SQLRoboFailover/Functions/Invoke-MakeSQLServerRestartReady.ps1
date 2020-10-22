@@ -27,7 +27,7 @@ Function Invoke-MakeSQLServerRestartReady {
 
     if ($IsSQLServerHealthy) {
         Write-Output "Starting failover for all primary AGs on [$ServerInstance] ..."
-        Invoke-FailoverAllPrimaryAGsOnServer -ServerInstance $ServerInstance -RunPostFailoverChecks:$false `
+        Invoke-FailoverAllPrimaryAGsOnServer -ServerInstance $ServerInstance -RunPostFailoverChecks:$RunPostFailoverChecks `
                 -CheckRunningBackups:$CheckRunningBackups -CheckRunningCheckDBs:$CheckRunningCheckDBs -ScriptOnly:$ScriptOnly -Confirm:$Confirm
     }
     
@@ -35,13 +35,8 @@ Function Invoke-MakeSQLServerRestartReady {
         Write-Output "SQL Server is NOT healthy"
         return
     }
-    
 
-    if ($RunPostFailoverChecks) {
-        #Run post failover health checks for all AGs
-        Invoke-AGHealthPoll -ServerInstance $ServerInstance -MaxPollCount 25 -PollIntervalSeconds 15
-    }
-    
+
     Set-AllSecondarySyncReplicasToAsync -ServerInstance $ServerInstance -MaintainHAForAGs -ScriptOnly:$ScriptOnly -Confirm:$Confirm
     
     [bool]$IsRestartReady = Test-IsRestartReady -ServerInstance $ServerInstance -Verbose

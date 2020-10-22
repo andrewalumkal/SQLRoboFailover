@@ -51,10 +51,16 @@ Function Invoke-FailoverAllPrimaryAGsOnServer {
     foreach ($PrimaryAG in $PrimaryAGs) {
 
         Invoke-FailoverAvailabilityGroup -PrimaryServerInstance $ServerInstance -AvailabilityGroup $PrimaryAG.AGName `
-            -RunPostFailoverChecks:$RunPostFailoverChecks -CheckRunningBackups:$CheckRunningBackups `
+            -RunPostFailoverChecks:$false -CheckRunningBackups:$CheckRunningBackups `
             -CheckRunningCheckDBs:$CheckRunningCheckDBs -ScriptOnly:$ScriptOnly -Confirm:$Confirm
 
     }
+
+    #Run failover checks after all failovers
+    if ($RunPostFailoverChecks) {
+        Invoke-AGHealthPoll -ServerInstance $ServerInstance -MaxPollCount 25 -PollIntervalSeconds 15
+    }
+    
 
   
 
