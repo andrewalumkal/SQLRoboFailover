@@ -372,7 +372,7 @@ Server to run test
 ## Test-IsSQLServerHealthy
 
 ```powershell
-Test-IsSQLServerHealthy -ServerInstance <ServerInstance> -RunExtendedAGChecks -Verbose
+Test-IsSQLServerHealthy -ServerInstance <ServerInstance> -RunExtendedAGChecks -CheckBIServices -Verbose
 ```
 Checks if all AG databases on the Sql Server instance are healthy. Returns a boolean value.
 
@@ -380,7 +380,9 @@ Checks for the following:
 - Any unhealthy databases on the instance. (Databases that are not in an online, restoring, or offline state)
 - Any AG replicas that are not in a healthy, connected state
 - Any unhealthy AG databases on the server
+- SQL Agent is running
 - If `-RunExtendedAGChecks` is enabled, function will also find the primary replica for all *secondary* AGs on the server and check the entire topology for unhealthy AG databases. This check is already done by default for AGs that are primary on the server.
+- If `-CheckBIServices` is enabled, function will also check if SSRS / SSAS / PowerBI services are running if they exist on the node.
 
 If any of the conditions are met, the function will return false.
 
