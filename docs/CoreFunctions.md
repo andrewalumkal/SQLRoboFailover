@@ -159,6 +159,37 @@ Default = $true
 
 --------------------------------------------------------------------------------------------------------------
 
+## Invoke-FailoverSQLCommand
+```powershell
+Invoke-FailoverSQLCommand -FailoverTargetServer <TargetServerName> -AvailabilityGroup <AGName> -Confirm:$true -ScriptOnly:$false
+```
+Failover to a specific target SQL Server instance. This function does not run any health checks and is mostly used in other function mentioned above.
+
+### Parameters
+```powershell
+-FailoverTargetServer
+```
+Target Server name 
+
+```powershell
+-AvailabilityGroup
+```
+Availability group name
+
+```powershell
+-ScriptOnly
+```
+Script out all actions. No actions will actully be performed.
+Default = $true
+
+```powershell
+-Confirm
+```
+Prompt for confirmation prior to taking action.
+Default = $true
+
+--------------------------------------------------------------------------------------------------------------
+
 # Availability Group Setting Functions
 
 ## Set-AGReplicaToSyncCommit
@@ -393,3 +424,57 @@ Finds the primary replica for all *secondary* AGs on the server and check the en
 
 --------------------------------------------------------------------------------------------------------------
 
+--------------------------------------------------------------------------------------------------------------
+
+# Miscellaneous
+## Find-PrimaryAGNodeFromSecondaryReplica
+
+```powershell
+Find-PrimaryAGNodeFromSecondaryReplica -SecondaryServerInstance <ServerInstance> -AvailabilityGroup <AGName>
+
+```
+This function will return the server name of the primary AG node regardless of which node is being queried. Helps to quickly determine the primary node regardless of which replica you pass in.
+
+
+### Parameters
+```powershell
+-SecondaryServerInstance
+```
+Server name of any replica in the AG
+
+```powershell
+-AvailabilityGroup
+```
+Availability group name
+
+--------------------------------------------------------------------------------------------------------------
+
+## Get-AGTopology
+
+```powershell
+Get-AGTopology -PrimaryServerInstance <PrimaryServerInstance> -AvailabilityGroup <AGName>
+
+```
+Returns the topology of an availability group in an easy to use powershell object (you need to pass in the primary server name for this to work):
+- AGName
+- PrimaryReplica
+- TotalReplicas
+- TotalSecondaryReplicas
+- AllSecondaryReplicas
+- SyncCommitSecondariesCount
+- SyncCommitSecondaryServers
+- AsyncCommitSecondariesCount
+- AsyncCommitSecondaryServers
+
+### Parameters
+```powershell
+-PrimaryServerInstance
+```
+Primary server name
+
+```powershell
+-AvailabilityGroup
+```
+Availability group name
+
+--------------------------------------------------------------------------------------------------------------
