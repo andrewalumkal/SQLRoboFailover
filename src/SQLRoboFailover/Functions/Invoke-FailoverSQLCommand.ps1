@@ -31,7 +31,7 @@ Function Invoke-FailoverSQLCommand {
     try {
         if ($PSCmdlet.ShouldProcess("FailoverTarget: $FailoverTargetServer - $AvailabilityGroup")) {
 
-            Invoke-Sqlcmd -ServerInstance $FailoverTargetServer -Database master -Query $query -QueryTimeout 60 -ErrorAction Stop
+            Invoke-SqlCmd -TrustServerCertificate -ServerInstance $FailoverTargetServer -Database master -Query $query -QueryTimeout 60 -ErrorAction Stop
             
         }
     }
