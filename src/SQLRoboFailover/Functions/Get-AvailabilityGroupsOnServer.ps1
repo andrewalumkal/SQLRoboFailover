@@ -30,7 +30,7 @@ Function Get-AvailabilityGroupsOnServer {
 "@
 
     try {
-        $AGReplicas = Invoke-Sqlcmd -ServerInstance $ServerInstance -query $query -Database master -QueryTimeout 180 -ErrorAction Stop
+        $AGReplicas = Invoke-SqlCmd -TrustServerCertificate -ServerInstance $ServerInstance -query $query -Database master -QueryTimeout 180 -ErrorAction Stop
         return $AGReplicas
         
     }

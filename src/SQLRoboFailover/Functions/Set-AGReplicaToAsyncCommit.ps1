@@ -46,8 +46,8 @@ Function Set-AGReplicaToAsyncCommit {
 
         if ($PSCmdlet.ShouldProcess("$SQLReplicaName - $AvailabilityGroup")) {
 
-            Invoke-Sqlcmd -ServerInstance $PrimaryServer -Database master -Query $QueryChangeFailoverMode -QueryTimeout 60 -ErrorAction Stop
-            Invoke-Sqlcmd -ServerInstance $PrimaryServer -Database master -Query $QuerySetAsync -QueryTimeout 60 -ErrorAction Stop
+            Invoke-SqlCmd -TrustServerCertificate -ServerInstance $PrimaryServer -Database master -Query $QueryChangeFailoverMode -QueryTimeout 60 -ErrorAction Stop
+            Invoke-SqlCmd -TrustServerCertificate -ServerInstance $PrimaryServer -Database master -Query $QuerySetAsync -QueryTimeout 60 -ErrorAction Stop
 
         }
     }

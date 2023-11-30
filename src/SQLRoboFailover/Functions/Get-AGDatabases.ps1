@@ -40,7 +40,7 @@ Function Get-AGDatabases {
 
     try {
         
-        $AGDBs = Invoke-Sqlcmd -ServerInstance $ServerInstance -Database master -Query $query -QueryTimeout 180 -ErrorAction Stop
+        $AGDBs = Invoke-SqlCmd -TrustServerCertificate -ServerInstance $ServerInstance -Database master -Query $query -QueryTimeout 180 -ErrorAction Stop
         return $AGDBs
     }
 

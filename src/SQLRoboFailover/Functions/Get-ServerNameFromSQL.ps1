@@ -16,7 +16,7 @@ Function Get-ServerNameFromSQL {
 "@
 
     try {
-        $ServerNameFromSQL = Invoke-Sqlcmd -ServerInstance $ServerInstance -query $query -Database master -QueryTimeout 30 -ErrorAction Stop
+        $ServerNameFromSQL = Invoke-SqlCmd -TrustServerCertificate -ServerInstance $ServerInstance -query $query -Database master -QueryTimeout 30 -ErrorAction Stop
         return ($ServerNameFromSQL.ServerName)
         
     }

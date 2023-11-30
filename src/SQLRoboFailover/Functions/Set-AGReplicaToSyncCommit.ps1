@@ -45,8 +45,8 @@ Function Set-AGReplicaToSyncCommit {
     try {
         if ($PSCmdlet.ShouldProcess("$SQLReplicaName - $AvailabilityGroup")) {
             
-            Invoke-Sqlcmd -ServerInstance $PrimaryServer -Database master -Query $QuerySetSync -QueryTimeout 60 -ErrorAction Stop
-            Invoke-Sqlcmd -ServerInstance $PrimaryServer -Database master -Query $QueryChangeFailoverMode -QueryTimeout 60 -ErrorAction Stop
+            Invoke-SqlCmd -TrustServerCertificate -ServerInstance $PrimaryServer -Database master -Query $QuerySetSync -QueryTimeout 60 -ErrorAction Stop
+            Invoke-SqlCmd -TrustServerCertificate -ServerInstance $PrimaryServer -Database master -Query $QueryChangeFailoverMode -QueryTimeout 60 -ErrorAction Stop
 
         }
     }

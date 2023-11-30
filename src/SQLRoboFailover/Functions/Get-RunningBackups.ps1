@@ -22,7 +22,7 @@ Function Get-RunningBackups {
 
     try {
         
-        $SQLOutput = Invoke-Sqlcmd -ServerInstance $ServerInstance -Database master -Query $query -QueryTimeout 60 -ErrorAction Stop
+        $SQLOutput = Invoke-SqlCmd -TrustServerCertificate -ServerInstance $ServerInstance -Database master -Query $query -QueryTimeout 60 -ErrorAction Stop
         return $SQLOutput
     }
 

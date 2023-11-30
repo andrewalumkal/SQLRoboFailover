@@ -18,7 +18,7 @@ Function Get-SQLAgentService {
 "@
 
     try {
-        $SQLAgentService = Invoke-Sqlcmd -ServerInstance $ServerInstance -query $query -Database master -QueryTimeout 60 -ErrorAction Stop
+        $SQLAgentService = Invoke-SqlCmd -TrustServerCertificate -ServerInstance $ServerInstance -query $query -Database master -QueryTimeout 60 -ErrorAction Stop
         return $SQLAgentService
         
     }

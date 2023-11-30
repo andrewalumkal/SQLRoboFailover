@@ -16,7 +16,7 @@ Function Get-SQLDatabases {
 "@
 
     try {
-        $SQLDatabases = Invoke-Sqlcmd -ServerInstance $ServerInstance -query $query -Database master -QueryTimeout 60 -ErrorAction Stop
+        $SQLDatabases = Invoke-SqlCmd -TrustServerCertificate -ServerInstance $ServerInstance -query $query -Database master -QueryTimeout 60 -ErrorAction Stop
         return $SQLDatabases
         
     }

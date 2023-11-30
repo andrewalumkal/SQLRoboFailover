@@ -36,7 +36,7 @@ Function Get-AllAGDatabaseReplicas {
 
     try {
         
-        $AllAGDBs = Invoke-Sqlcmd -ServerInstance $ServerInstance -Database master -Query $query -QueryTimeout 180 -ErrorAction Stop
+        $AllAGDBs = Invoke-SqlCmd -TrustServerCertificate -ServerInstance $ServerInstance -Database master -Query $query -QueryTimeout 180 -ErrorAction Stop
         return $AllAGDBs
     }
 
